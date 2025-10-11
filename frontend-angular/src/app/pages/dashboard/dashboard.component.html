@@ -1,0 +1,118 @@
+<div class="dashboard-page">
+  <app-navbar></app-navbar>
+
+  <div class="container dashboard-container">
+    <div class="dashboard-header">
+      <h1>Mon tableau de bord</h1>
+      <p>Gérez vos produits et suivez vos publications</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card card">
+        <div class="stat-header">
+          <span class="stat-title">Total produits</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+        </div>
+        <div class="stat-value">{{ products.length }}</div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-header">
+          <span class="stat-title">En attente</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="stat-value">{{ pendingCount }}</div>
+      </div>
+
+      <div class="stat-card card">
+        <div class="stat-header">
+          <span class="stat-title">Validés</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="stat-value">{{ validCount }}</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button
+        class="tab"
+        [class.active]="activeTab === 'all'"
+        (click)="setActiveTab('all')"
+      >
+        Tous ({{ products.length }})
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'pending'"
+        (click)="setActiveTab('pending')"
+      >
+        En attente ({{ pendingCount }})
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'valid'"
+        (click)="setActiveTab('valid')"
+      >
+        Validés ({{ validCount }})
+      </button>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'deleted'"
+        (click)="setActiveTab('deleted')"
+      >
+        Rejetés ({{ deletedCount }})
+      </button>
+    </div>
+
+    <!-- Products Content -->
+    <div class="tab-content">
+      @if (isLoading) {
+        <div class="loading">
+          <div class="spinner"></div>
+        </div>
+      } @else if (filteredProducts.length === 0) {
+        <div class="empty-state card">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <p>
+            @if (activeTab === 'all') {
+              Vous n'avez pas encore de produits
+            } @else if (activeTab === 'pending') {
+              Aucun produit en attente de validation
+            } @else if (activeTab === 'valid') {
+              Aucun produit validé
+            } @else {
+              Aucun produit rejeté
+            }
+          </p>
+        </div>
+      } @else {
+        <div class="products-grid">
+          @for (product of filteredProducts; track product.id) {
+            <div class="product-wrapper">
+              <app-product-card [product]="product"></app-product-card>
+              <span class="status-badge" [ngClass]="getStatusBadgeClass(product.status)">
+                {{ getStatusLabel(product.status) }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

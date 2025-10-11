@@ -1,0 +1,129 @@
+<div class="admin-page">
+  <app-navbar></app-navbar>
+
+  <div class="container admin-container">
+    <div class="admin-header">
+      <div class="header-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Administration</h1>
+        <p>Statistiques et vue d'ensemble de la plateforme</p>
+      </div>
+    </div>
+
+    @if (isLoading) {
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    } @else if (stats) {
+      <div class="stats-grid">
+        <div class="stat-card card">
+          <div class="stat-header">
+            <span class="stat-title">Total Utilisateurs</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="stat-value">{{ stats.totalUsers }}</div>
+          <p class="stat-description">Tous les comptes créés</p>
+        </div>
+
+        <div class="stat-card card">
+          <div class="stat-header">
+            <span class="stat-title">Total Produits</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </div>
+          <div class="stat-value">{{ stats.totalProducts }}</div>
+          <p class="stat-description">Tous statuts confondus</p>
+        </div>
+
+        <div class="stat-card card">
+          <div class="stat-header">
+            <span class="stat-title">Produits Validés</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </div>
+          <div class="stat-value">{{ stats.validProducts }}</div>
+          <p class="stat-description">Visibles publiquement</p>
+        </div>
+
+        <div class="stat-card card">
+          <div class="stat-header">
+            <span class="stat-title">En Attente</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="stat-value">{{ stats.pendingProducts }}</div>
+          <p class="stat-description">À modérer</p>
+        </div>
+
+        <div class="stat-card card">
+          <div class="stat-header">
+            <span class="stat-title">Produits Rejetés</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <div class="stat-value">{{ stats.deletedProducts }}</div>
+          <p class="stat-description">Supprimés ou rejetés</p>
+        </div>
+
+        <div class="stat-card card">
+          <div class="stat-header">
+            <span class="stat-title">Utilisateurs VIP</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <div class="stat-value">{{ stats.vipUsers }}</div>
+          <p class="stat-description">Comptes premium</p>
+        </div>
+
+        <div class="stat-card card">
+          <div class="stat-header">
+            <span class="stat-title">Modérateurs</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <polyline points="17 11 19 13 23 9"></polyline>
+            </svg>
+          </div>
+          <div class="stat-value">{{ stats.moderatorUsers }}</div>
+          <p class="stat-description">Équipe de modération</p>
+        </div>
+
+        <div class="stat-card card">
+          <div class="stat-header">
+            <span class="stat-title">Administrateurs</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <div class="stat-value">{{ stats.adminUsers }}</div>
+          <p class="stat-description">Accès complet</p>
+        </div>
+      </div>
+    } @else {
+      <div class="error-state card">
+        <p>Erreur lors du chargement des statistiques</p>
+      </div>
+    }
+  </div>
+</div>

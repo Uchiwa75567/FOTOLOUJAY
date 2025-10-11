@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    /* === Structure du projet === */
+    "rootDir": "./src",            // Code source
+    "outDir": "./dist",            // Dossier de sortie après compilation
+
+    /* === Cible et module === */
+    "target": "ES2020",            // Version JavaScript compatible avec Node 18+
+    "module": "commonjs",          // Compatible avec Express, Prisma, etc.
+    "moduleResolution": "node",    // Résolution des imports à la manière de Node
+    "esModuleInterop": true,       // Permet les imports modernes (import express from 'express')
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,     // Permet d’importer des fichiers JSON
+    "isolatedModules": true,
+
+    /* === Typage et vérifications === */
+    "strict": true,                // Active toutes les vérifications strictes
+    "skipLibCheck": true,          // Ignore les vérifications internes des libs
+    "forceConsistentCasingInFileNames": true,
+
+    /* === Outils utiles === */
+    "sourceMap": true,             // Pour le debug avec Nodemon/VS Code
+    "declaration": true,           // Génère les fichiers .d.ts
+    "declarationMap": false,       // Pas nécessaire ici
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+
+    /* === Types === */
+    "types": ["node"],             // Charge les définitions de Node.js
+    "lib": ["es2020"],             // Charge les fonctionnalités JS modernes
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

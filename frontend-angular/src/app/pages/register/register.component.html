@@ -1,0 +1,84 @@
+<div class="auth-page">
+  <div class="auth-card card">
+    <div class="auth-header">
+      <div class="auth-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+      </div>
+      <h1>Inscription</h1>
+      <p>Créez votre compte pour commencer à vendre</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="auth-form">
+      @if (error) {
+        <div class="alert alert-error">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          {{ error }}
+        </div>
+      }
+
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="username"
+          class="input"
+          placeholder="johndoe"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="email"
+          class="input"
+          placeholder="votre@email.com"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          class="input"
+          placeholder="••••••••"
+          required
+          minlength="6"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full" [disabled]="isLoading">
+        @if (isLoading) {
+          <div class="spinner"></div>
+          <span>Inscription...</span>
+        } @else {
+          <span>Créer mon compte</span>
+        }
+      </button>
+
+      <p class="auth-footer">
+        Déjà un compte ?
+        <a routerLink="/login" class="link">Se connecter</a>
+      </p>
+    </form>
+  </div>
+</div>
