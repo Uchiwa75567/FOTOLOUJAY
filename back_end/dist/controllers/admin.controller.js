@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rejectProduct = exports.validateProduct = exports.getStats = void 0;
+exports.rejectProduct = exports.validateProduct = exports.getPendingProducts = exports.getStats = void 0;
 const prisma_1 = __importDefault(require("../config/prisma"));
 const notification_service_1 = require("../services/notification.service");
 /**
@@ -39,20 +39,45 @@ const getStats = async (req, res) => {
 };
 exports.getStats = getStats;
 /**
- * PUT /api/admin/products/:id/validate
+ * GET /api/moderator/pending-products
  * Role: MODERATOR
+ */
+const getPendingProducts = async (req, res) => {
+    try {
+        const pendingProducts = await prisma_1.default.product.findMany({
+            where: { status: "PENDING" },
+            include: { user: true },
+            orderBy: { createdAt: "desc" },
+        });
+        res.json(pendingProducts);
+    }
+    catch (err) {
+        console.error("getPendingProducts error:", err);
+        res.status(500).json({ message: "Erreur lors de la récupération des produits en attente" });
+    }
+};
+exports.getPendingProducts = getPendingProducts;
+/**
+ * PUT /api/moderator/products/:id/validate
+ * Role: MODERATOR
+ * Body: { description? } - Optionnel, met à jour la description si fournie
  */
 const validateProduct = async (req, res) => {
     try {
         const id = Number(req.params.id);
+        const { description } = req.body;
+        const updateData = { status: "VALID" };
+        if (description) {
+            updateData.description = description;
+        }
         const product = await prisma_1.default.product.update({
             where: { id },
-            data: { status: "VALID" },
+            data: updateData,
             include: { user: true },
         });
         // Send notification
         await (0, notification_service_1.notifyProductValidated)(product.user.email, product.title);
-        return res.json(product);
+        return res.json({ ...product, message: "Produit validé avec succès" });
     }
     catch (err) {
         console.error("validateProduct error:", err);
@@ -61,22 +86,26 @@ const validateProduct = async (req, res) => {
 };
 exports.validateProduct = validateProduct;
 /**
- * PUT /api/admin/products/:id/reject
+ * PUT /api/moderator/products/:id/reject
  * Role: MODERATOR
- * body.reason (optionnel)
+ * Body: { reason? } - Optionnel, met à jour la raison de rejet si fournie
  */
 const rejectProduct = async (req, res) => {
     try {
         const id = Number(req.params.id);
         const { reason } = req.body;
+        const updateData = { status: "DELETED" };
+        if (reason) {
+            updateData.rejectionReason = reason;
+        }
         const product = await prisma_1.default.product.update({
             where: { id },
-            data: { status: "DELETED" },
+            data: updateData,
             include: { user: true },
         });
         // Send notification
         await (0, notification_service_1.notifyProductRejected)(product.user.email, product.title, reason);
-        return res.json({ product, reason: reason ?? null });
+        return res.json({ ...product, message: "Produit rejeté avec succès" });
     }
     catch (err) {
         console.error("rejectProduct error:", err);

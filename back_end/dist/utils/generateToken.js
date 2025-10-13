@@ -3,13 +3,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateToken = void 0;
+exports.generateRefreshToken = exports.generateAccessToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-const generateToken = (userId, role) => {
-    const secret = process.env.JWT_SECRET;
-    return jsonwebtoken_1.default.sign({ id: userId, role: role ?? "USER" }, secret, { expiresIn: "7d" });
+const secret = process.env.JWT_SECRET;
+const generateAccessToken = (userId, role) => {
+    return jsonwebtoken_1.default.sign({ id: userId, role: role ?? "USER" }, secret, { expiresIn: "15m" });
 };
-exports.generateToken = generateToken;
+exports.generateAccessToken = generateAccessToken;
+const generateRefreshToken = (userId) => {
+    return jsonwebtoken_1.default.sign({ id: userId }, secret, { expiresIn: "7d" });
+};
+exports.generateRefreshToken = generateRefreshToken;
 //# sourceMappingURL=generateToken.js.map

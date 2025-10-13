@@ -1,0 +1,182 @@
+<div class="create-product-page">
+  <app-navbar></app-navbar>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>📷 Publier un produit</h1>
+      <p>Capturez une photo et partagez votre produit avec la communauté</p>
+    </div>
+
+    @if (successMessage()) {
+      <div class="alert alert-success">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span>{{ successMessage() }}</span>
+      </div>
+    }
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <div class="create-product-content">
+      @if (showCamera()) {
+        <div class="camera-section">
+          <app-camera 
+            (photoCaptured)="onPhotoCaptured($event)"
+            (cancelled)="onCameraCancelled()">
+          </app-camera>
+        </div>
+      } @else {
+        <div class="product-form-container">
+          <!-- Photo Section -->
+          <div class="photo-section card">
+            <h2>Photo du produit</h2>
+            <p class="section-description">Prenez une photo claire de votre produit</p>
+            
+            @if (capturedPhoto()) {
+              <div class="photo-preview">
+                <img [src]="capturedPhoto()" alt="Photo du produit" />
+                <div class="photo-actions">
+                  <button (click)="openCamera()" class="btn btn-outline">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="1 4 1 10 7 10"></polyline>
+                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    Reprendre la photo
+                  </button>
+                  <button (click)="removePhoto()" class="btn btn-outline btn-destructive">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Supprimer
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <div class="photo-placeholder">
+                <div class="placeholder-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                </div>
+                <p>Aucune photo capturée</p>
+                <button (click)="openCamera()" class="btn btn-primary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                  Capturer une photo
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Form Section -->
+          <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+            <div class="form-section card">
+              <h2>Informations du produit</h2>
+              <p class="section-description">Décrivez votre produit en détail</p>
+
+              <div class="form-group">
+                <label for="title">Titre du produit *</label>
+                <input 
+                  type="text" 
+                  id="title" 
+                  formControlName="title"
+                  class="input"
+                  placeholder="Ex: iPhone 13 Pro Max 256GB"
+                  [class.input-error]="title?.invalid && title?.touched"
+                />
+                @if (title?.invalid && title?.touched) {
+                  <span class="error-text">
+                    @if (title?.errors?.['required']) {
+                      Le titre est obligatoire
+                    }
+                    @if (title?.errors?.['maxlength']) {
+                      Le titre ne peut pas dépasser 100 caractères
+                    }
+                  </span>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea 
+                  id="description" 
+                  formControlName="description"
+                  class="input textarea"
+                  rows="6"
+                  placeholder="Décrivez votre produit en détail (minimum 10 caractères)..."
+                  [class.input-error]="description?.invalid && description?.touched"
+                ></textarea>
+                <div class="char-count">
+                  {{ description?.value?.length || 0 }} / 1000 caractères
+                  @if (description?.value?.length >= 10) {
+                    <span class="char-count-valid">✓</span>
+                  }
+                </div>
+                @if (description?.invalid && description?.touched) {
+                  <span class="error-text">
+                    @if (description?.errors?.['required']) {
+                      La description est obligatoire
+                    }
+                    @if (description?.errors?.['minlength']) {
+                      La description doit contenir au moins 10 caractères
+                    }
+                  </span>
+                }
+              </div>
+
+              <div class="form-info">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <p>Votre produit sera soumis à validation par un modérateur avant d'être publié.</p>
+              </div>
+
+              <div class="form-actions">
+                <button 
+                  type="button" 
+                  routerLink="/dashboard" 
+                  class="btn btn-outline"
+                  [disabled]="isSubmitting()"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="isSubmitting() || !capturedPhoto()"
+                >
+                  @if (isSubmitting()) {
+                    <div class="spinner"></div>
+                    <span>Publication...</span>
+                  } @else {
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Publier le produit</span>
+                  }
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      }
+    </div>
+  </div>
+</div>

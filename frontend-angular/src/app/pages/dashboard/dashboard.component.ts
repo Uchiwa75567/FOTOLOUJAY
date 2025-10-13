@@ -25,10 +25,9 @@ export class DashboardComponent implements OnInit {
   }
 
   loadProducts(): void {
-    this.productService.getProducts().subscribe({
+    this.productService.getUserProducts().subscribe({
       next: (products) => {
-        const userId = this.authService.currentUser()?.id;
-        this.products = products.filter(p => p.userId === userId);
+        this.products = products;
         this.isLoading = false;
       },
       error: (error) => {

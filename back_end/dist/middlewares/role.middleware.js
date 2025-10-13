@@ -4,19 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isAdmin = exports.requireModerator = void 0;
-const prisma_1 = __importDefault(require("../config/prisma"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 /**
  * Usage: router.put("/...": authMiddleware, requireModerator, controller)
  */
 const requireModerator = async (req, res, next) => {
     try {
-        const userIdRaw = req.userId;
-        if (!userIdRaw)
+        const user = req.user;
+        if (!user || !user.id)
             return res.status(401).json({ message: "Utilisateur non authentifié" });
-        const user = await prisma_1.default.user.findUnique({ where: { id: Number(userIdRaw) } });
-        if (!user)
-            return res.status(401).json({ message: "Utilisateur introuvable" });
         if (user.role !== "MODERATOR")
             return res.status(403).json({ message: "Accès réservé aux modérateurs" });
         // OK

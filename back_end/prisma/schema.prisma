@@ -23,6 +23,8 @@ model User {
   email         String    @unique
   password      String
   refreshToken  String?   // Nouveau champ pour refresh token
+  phone         String?   // Numéro de téléphone
+  address       String?   // Adresse
   role          Role      @default(USER)
   products      Product[]
   createdAt     DateTime  @default(now())

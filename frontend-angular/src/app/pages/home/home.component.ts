@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { ProductService, type Product } from '../../core/services/product.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,7 @@ import { ProductService, type Product } from '../../core/services/product.servic
 })
 export class HomeComponent implements OnInit {
   private productService = inject(ProductService);
+  authService = inject(AuthService);
   
   products: Product[] = [];
   isLoading = true;

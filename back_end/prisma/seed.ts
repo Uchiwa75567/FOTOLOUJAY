@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
-
+                                                   
 async function main() {
   const admins = [
     { username: "admin", email: "admin@fotoloujay.com", password: "admin123" },

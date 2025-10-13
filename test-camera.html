@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Caméra - FOTOLJAY</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #00853F 0%, #006B32 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #00853F;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .video-container.active {
+            display: block;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #00853F;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #006B32;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 133, 63, 0.3);
+        }
+        .btn-secondary {
+            background: #FCD116;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background: #e3bb00;
+        }
+        .btn-danger {
+            background: #E31B23;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c41820;
+        }
+        .info-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .info-box h3 {
+            color: #00853F;
+            margin-bottom: 10px;
+        }
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .info-box li {
+            padding: 5px 0;
+            color: #666;
+        }
+        .info-box li:before {
+            content: "✓ ";
+            color: #00853F;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #00853F;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📷 Test Caméra</h1>
+        <p class="subtitle">FOTOLJAY - Diagnostic Caméra</p>
+        
+        <div id="status" class="status info">
+            Prêt à tester la caméra
+        </div>
+
+        <div id="videoContainer" class="video-container">
+            <video id="video" autoplay playsinline muted></video>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn" class="btn-primary" onclick="startCamera()">
+                🎥 Démarrer la Caméra
+            </button>
+            <button id="stopBtn" class="btn-danger" onclick="stopCamera()" style="display: none;">
+                ⏹️ Arrêter
+            </button>
+        </div>
+
+        <div class="info-box">
+            <h3>Instructions :</h3>
+            <ul>
+                <li>Cliquez sur "Démarrer la Caméra"</li>
+                <li>Autorisez l'accès dans la popup</li>
+                <li>La vidéo devrait s'afficher</li>
+                <li>Vérifiez la console (F12) pour les logs</li>
+            </ul>
+        </div>
+
+        <div class="info-box" style="margin-top: 15px;">
+            <h3>Informations Système :</h3>
+            <ul id="systemInfo"></ul>
+        </div>
+    </div>
+
+    <script>
+        let stream = null;
+        const video = document.getElementById('video');
+        const status = document.getElementById('status');
+        const videoContainer = document.getElementById('videoContainer');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const systemInfo = document.getElementById('systemInfo');
+
+        // Display system info
+        function displaySystemInfo() {
+            const info = [
+                `Navigateur: ${navigator.userAgent.split(' ').pop()}`,
+                `Plateforme: ${navigator.platform}`,
+                `Langue: ${navigator.language}`,
+                `WebRTC: ${navigator.mediaDevices ? '✅ Supporté' : '❌ Non supporté'}`
+            ];
+            
+            systemInfo.innerHTML = info.map(i => `<li>${i}</li>`).join('');
+        }
+
+        async function startCamera() {
+            try {
+                status.className = 'status info';
+                status.innerHTML = '⏳ Demande d\'accès à la caméra...';
+                startBtn.disabled = true;
+
+                console.log('🎥 Requesting camera access...');
+
+                // Try back camera first
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: 'environment' },
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                });
+
+                console.log('✅ Camera access granted:', stream);
+
+                video.srcObject = stream;
+                videoContainer.classList.add('active');
+                
+                status.className = 'status success';
+                status.innerHTML = '✅ Caméra démarrée avec succès !';
+                
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-block';
+
+                // Log camera info
+                const tracks = stream.getVideoTracks();
+                if (tracks.length > 0) {
+                    const settings = tracks[0].getSettings();
+                    console.log('📹 Camera settings:', settings);
+                    console.log(`   - Resolution: ${settings.width}x${settings.height}`);
+                    console.log(`   - Facing mode: ${settings.facingMode || 'unknown'}`);
+                }
+
+            } catch (error) {
+                console.error('❌ Camera error:', error);
+                
+                status.className = 'status error';
+                
+                if (error.name === 'NotAllowedError') {
+                    status.innerHTML = '❌ Permission refusée. Autorisez l\'accès à la caméra.';
+                } else if (error.name === 'NotFoundError') {
+                    status.innerHTML = '❌ Aucune caméra trouvée sur cet appareil.';
+                } else if (error.name === 'NotReadableError') {
+                    status.innerHTML = '❌ La caméra est déjà utilisée par une autre application.';
+                } else if (error.name === 'OverconstrainedError') {
+                    status.innerHTML = '⚠️ Caméra arrière non disponible, essai caméra frontale...';
+                    // Try fallback
+                    tryFallbackCamera();
+                } else {
+                    status.innerHTML = `❌ Erreur: ${error.message}`;
+                }
+                
+                startBtn.disabled = false;
+            }
+        }
+
+        async function tryFallbackCamera() {
+            try {
+                console.log('🔄 Trying fallback camera (any available)...');
+                
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    }
+                });
+
+                console.log('✅ Fallback camera access granted');
+
+                video.srcObject = stream;
+                videoContainer.classList.add('active');
+                
+                status.className = 'status success';
+                status.innerHTML = '✅ Caméra frontale démarrée !';
+                
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-block';
+
+            } catch (error) {
+                console.error('❌ Fallback camera error:', error);
+                status.className = 'status error';
+                status.innerHTML = '❌ Impossible d\'accéder à la caméra.';
+                startBtn.disabled = false;
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => {
+                    console.log('🛑 Stopping track:', track.kind);
+                    track.stop();
+                });
+                stream = null;
+            }
+            
+            video.srcObject = null;
+            videoContainer.classList.remove('active');
+            
+            status.className = 'status info';
+            status.innerHTML = 'Caméra arrêtée';
+            
+            startBtn.style.display = 'inline-block';
+            startBtn.disabled = false;
+            stopBtn.style.display = 'none';
+        }
+
+        // List available cameras
+        async function listCameras() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const cameras = devices.filter(d => d.kind === 'videoinput');
+                
+                console.log('📷 Available cameras:', cameras.length);
+                cameras.forEach((cam, i) => {
+                    console.log(`   ${i + 1}. ${cam.label || 'Camera ' + (i + 1)}`);
+                });
+            } catch (error) {
+                console.error('Error listing cameras:', error);
+            }
+        }
+
+        // Initialize
+        displaySystemInfo();
+        listCameras();
+        
+        console.log('🚀 Test page loaded. Click "Démarrer la Caméra" to test.');
+    </script>
+</body>
+</html>

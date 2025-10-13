@@ -7,5 +7,6 @@ export declare const authRepository: {
         username: string;
         email: string;
         password: string;
+        refreshToken: string | null;
     } | null>;
 };

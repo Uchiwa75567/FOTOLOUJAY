@@ -1,0 +1,163 @@
+<div class="moderation-page">
+  <app-navbar></app-navbar>
+
+  <div class="container moderation-container">
+    <div class="moderation-header">
+      <h1>🛡️ Modération des produits</h1>
+      <p>Validez ou rejetez les produits en attente de modération</p>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Chargement des produits en attente...</p>
+      </div>
+    } @else if (pendingProducts().length === 0) {
+      <div class="empty-state card">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <h2>Aucun produit en attente</h2>
+        <p>Tous les produits ont été modérés ✅</p>
+      </div>
+    } @else {
+      <div class="products-count">
+        <span class="badge">{{ pendingProducts().length }} produit(s) en attente</span>
+      </div>
+
+      <div class="products-grid">
+        @for (product of pendingProducts(); track product.id) {
+          <div class="product-card card">
+            <div class="product-image">
+              <img [src]="getImageUrl(product.photoUrl)" [alt]="product.title" />
+            </div>
+            
+            <div class="product-content">
+              <div class="product-header">
+                <h3>{{ product.title }}</h3>
+                <span class="product-date">{{ product.createdAt | date:'short' }}</span>
+              </div>
+              
+              <p class="product-description">{{ product.description }}</p>
+              
+              <div class="product-user">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>{{ product.user?.username || 'Utilisateur inconnu' }}</span>
+              </div>
+
+              <div class="product-actions">
+                <button class="btn btn-success" (click)="openValidateModal(product)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  Valider
+                </button>
+                <button class="btn btn-danger" (click)="openRejectModal(product)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                  Rejeter
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Validate Modal -->
+  @if (showValidateModal() && selectedProduct()) {
+    <div class="modal-overlay" (click)="closeModals()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>✅ Valider le produit</h2>
+          <button class="close-btn" (click)="closeModals()">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="product-preview">
+            <img [src]="getImageUrl(selectedProduct()!.photoUrl)" [alt]="selectedProduct()!.title" />
+          </div>
+          
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" [value]="selectedProduct()!.title" disabled />
+          </div>
+          
+          <div class="form-group">
+            <label>Description (modifiable)</label>
+            <textarea 
+              [(ngModel)]="editedDescription"
+              rows="4"
+              placeholder="Modifiez la description si nécessaire"
+            ></textarea>
+            <small>Vous pouvez améliorer la description avant validation</small>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeModals()" [disabled]="isSubmitting()">
+            Annuler
+          </button>
+          <button class="btn btn-success" (click)="validateProduct()" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="spinner-small"></span>
+            }
+            Valider le produit
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Reject Modal -->
+  @if (showRejectModal() && selectedProduct()) {
+    <div class="modal-overlay" (click)="closeModals()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>❌ Rejeter le produit</h2>
+          <button class="close-btn" (click)="closeModals()">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="product-preview">
+            <img [src]="getImageUrl(selectedProduct()!.photoUrl)" [alt]="selectedProduct()!.title" />
+          </div>
+          
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" [value]="selectedProduct()!.title" disabled />
+          </div>
+          
+          <div class="form-group">
+            <label>Raison du rejet (optionnel)</label>
+            <textarea 
+              [(ngModel)]="rejectionReason"
+              rows="4"
+              placeholder="Expliquez pourquoi ce produit est rejeté..."
+            ></textarea>
+            <small>Cette raison sera envoyée à l'utilisateur par email</small>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeModals()" [disabled]="isSubmitting()">
+            Annuler
+          </button>
+          <button class="btn btn-danger" (click)="rejectProduct()" [disabled]="isSubmitting()">
+            @if (isSubmitting()) {
+              <span class="spinner-small"></span>
+            }
+            Rejeter le produit
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

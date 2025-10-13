@@ -7,6 +7,7 @@ export declare const findAll: () => Promise<{
     username: string;
     email: string;
     password: string;
+    refreshToken: string | null;
 }[]>;
 export declare const findById: (id: number) => Promise<{
     createdAt: Date;
@@ -16,6 +17,7 @@ export declare const findById: (id: number) => Promise<{
     username: string;
     email: string;
     password: string;
+    refreshToken: string | null;
 } | null>;
 export declare const create: (data: {
     username: string;
@@ -30,6 +32,7 @@ export declare const create: (data: {
     username: string;
     email: string;
     password: string;
+    refreshToken: string | null;
 }>;
 export declare const update: (id: number, data: Partial<{
     username: string;
@@ -44,6 +47,7 @@ export declare const update: (id: number, data: Partial<{
     username: string;
     email: string;
     password: string;
+    refreshToken: string | null;
 }>;
 export declare const remove: (id: number) => Promise<{
     createdAt: Date;
@@ -53,4 +57,5 @@ export declare const remove: (id: number) => Promise<{
     username: string;
     email: string;
     password: string;
+    refreshToken: string | null;
 }>;

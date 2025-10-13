@@ -16,4 +16,9 @@ export class NavbarComponent {
   logout(): void {
     this.authService.logout();
   }
+
+  isModerator(): boolean {
+    const role = this.authService.currentUser()?.role;
+    return role === 'MODERATOR' || role === 'ADMIN';
+  }
 }

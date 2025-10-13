@@ -3,50 +3,70 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.republishProduct = exports.getProduct = exports.listProducts = exports.createProduct = exports.uploadPhoto = exports.upload = void 0;
+exports.republishProduct = exports.getProduct = exports.getUserProducts = exports.listProducts = exports.createProduct = exports.createProductWithPhoto = void 0;
 const prisma_1 = __importDefault(require("../config/prisma"));
-const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-// === Configuration du stockage Multer ===
-const storage = multer_1.default.diskStorage({
-    destination: (req, file, cb) => {
+// === Création produit avec photo capturée (base64) ===
+const createProductWithPhoto = async (req, res) => {
+    try {
+        const { title, description, photoBase64 } = req.body;
+        const userId = req.user?.id;
+        // Vérification de l'utilisateur authentifié
+        if (!userId) {
+            return res.status(401).json({ message: "Utilisateur non authentifié" });
+        }
+        // Vérification obligatoire des champs
+        if (!title || !description || !photoBase64) {
+            return res.status(400).json({ message: "Titre, description et photo obligatoires" });
+        }
+        if (description.length < 10) {
+            return res.status(400).json({ message: "Description trop courte (minimum 10 caractères)" });
+        }
+        // Vérification obligatoire de la photo capturée
+        if (!photoBase64) {
+            return res.status(400).json({ message: "Photo obligatoire - vous devez photographier le produit" });
+        }
+        // Validation du format base64
+        if (!photoBase64.startsWith('data:image/')) {
+            return res.status(400).json({ message: "Format photo invalide" });
+        }
+        // Créer le dossier uploads s'il n'existe pas
         const uploadPath = path_1.default.join(process.cwd(), "uploads");
         if (!fs_1.default.existsSync(uploadPath)) {
             fs_1.default.mkdirSync(uploadPath);
         }
-        cb(null, uploadPath);
-    },
-    filename: (req, file, cb) => {
+        // Générer nom unique pour la photo
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path_1.default.extname(file.originalname));
-    },
-});
-exports.upload = (0, multer_1.default)({ storage });
-// === Upload photo et création produit ===
-const uploadPhoto = async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: "Aucune photo reçue" });
-        }
-        const { title, description, userId } = req.body;
-        const photoUrl = `/uploads/${req.file.filename}`;
+        const extension = photoBase64.split(';')[0].split('/')[1]; // jpg, png, etc.
+        const filename = `${uniqueSuffix}.${extension}`;
+        const filepath = path_1.default.join(uploadPath, filename);
+        // Extraire les données base64 et sauvegarder
+        const base64Data = photoBase64.split(',')[1];
+        const buffer = Buffer.from(base64Data, 'base64');
+        fs_1.default.writeFileSync(filepath, buffer);
+        const photoUrl = `/uploads/${filename}`;
+        // Créer le produit en PENDING pour modération manuelle
         const product = await prisma_1.default.product.create({
             data: {
                 title,
                 description,
                 photoUrl,
-                userId: Number(userId),
+                userId,
+                status: "PENDING",
             },
         });
-        res.status(201).json(product);
+        res.status(201).json({
+            ...product,
+            message: "Produit créé en attente de validation par un modérateur."
+        });
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Erreur lors de l'upload" });
+        res.status(500).json({ message: "Erreur lors de la création du produit" });
     }
 };
-exports.uploadPhoto = uploadPhoto;
+exports.createProductWithPhoto = createProductWithPhoto;
 // === Création de produit sans upload (photoUrl vide) ===
 const createProduct = async (req, res) => {
     try {
@@ -85,6 +105,26 @@ const listProducts = async (req, res) => {
     }
 };
 exports.listProducts = listProducts;
+// === Récupérer les produits de l'utilisateur connecté (tous les statuts) ===
+const getUserProducts = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ message: "Utilisateur non authentifié" });
+        }
+        const products = await prisma_1.default.product.findMany({
+            where: { userId },
+            include: { user: true },
+            orderBy: { createdAt: "desc" },
+        });
+        res.json(products);
+    }
+    catch (error) {
+        console.error("getUserProducts error:", error);
+        res.status(500).json({ message: "Erreur lors du chargement de vos produits" });
+    }
+};
+exports.getUserProducts = getUserProducts;
 // === Récupérer un produit par ID ===
 const getProduct = async (req, res) => {
     try {

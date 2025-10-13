@@ -7,7 +7,7 @@ import fs from "fs";
 // === Création produit avec photo capturée (base64) ===
 export const createProductWithPhoto = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, photoBase64 } = req.body;
+    const { title, description, photoBase64, phone, address } = req.body;
     const userId = req.user?.id;
 
     // Vérification de l'utilisateur authentifié
@@ -16,12 +16,23 @@ export const createProductWithPhoto = async (req: AuthRequest, res: Response) =>
     }
 
     // Vérification obligatoire des champs
-    if (!title || !description || !photoBase64) {
-      return res.status(400).json({ message: "Titre, description et photo obligatoires" });
+    if (!title || !description || !photoBase64 || !phone || !address) {
+      return res.status(400).json({ message: "Titre, description, photo, téléphone et adresse obligatoires" });
     }
 
     if (description.length < 10) {
       return res.status(400).json({ message: "Description trop courte (minimum 10 caractères)" });
+    }
+
+    // Validation téléphone sénégalais (9 chiffres, commence par 77, 78, 76, 70 ou 75)
+    const phoneRegex = /^(77|78|76|70|75)[0-9]{7}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: "Numéro de téléphone invalide - doit être un numéro sénégalais de 9 chiffres commençant par 77, 78, 76, 70 ou 75" });
+    }
+
+    // Validation adresse (minimum 5 caractères)
+    if (address.length < 5) {
+      return res.status(400).json({ message: "Adresse trop courte (minimum 5 caractères)" });
     }
 
     // Vérification obligatoire de la photo capturée
@@ -52,6 +63,12 @@ export const createProductWithPhoto = async (req: AuthRequest, res: Response) =>
     fs.writeFileSync(filepath, buffer);
 
     const photoUrl = `/uploads/${filename}`;
+
+    // Mettre à jour les informations de l'utilisateur
+    await prisma.user.update({
+      where: { id: userId },
+      data: { phone, address },
+    });
 
     // Créer le produit en PENDING pour modération manuelle
     const product = await prisma.product.create({
@@ -110,6 +127,28 @@ export const listProducts = async (req: Request, res: Response) => {
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: "Erreur lors du chargement des produits" });
+  }
+};
+
+// === Récupérer les produits de l'utilisateur connecté (tous les statuts) ===
+export const getUserProducts = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Utilisateur non authentifié" });
+    }
+
+    const products = await prisma.product.findMany({
+      where: { userId },
+      include: { user: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json(products);
+  } catch (error) {
+    console.error("getUserProducts error:", error);
+    res.status(500).json({ message: "Erreur lors du chargement de vos produits" });
   }
 };
 
