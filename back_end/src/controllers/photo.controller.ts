@@ -118,7 +118,18 @@ export const listProducts = async (req: Request, res: Response) => {
   try {
     const products = await prisma.product.findMany({
       where: { status: "VALID" },
-      include: { user: true },
+      include: { 
+        user: {
+          select: {
+            id: true,
+            username: true,
+            role: true,
+            phone: true,
+            address: true,
+            premiumExpiry: true
+          }
+        }
+      },
       orderBy: [
         { vip: "desc" }, // VIP first
         { createdAt: "desc" },
@@ -141,7 +152,18 @@ export const getUserProducts = async (req: AuthRequest, res: Response) => {
 
     const products = await prisma.product.findMany({
       where: { userId },
-      include: { user: true },
+      include: { 
+        user: {
+          select: {
+            id: true,
+            username: true,
+            role: true,
+            phone: true,
+            address: true,
+            premiumExpiry: true
+          }
+        }
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -158,7 +180,18 @@ export const getProduct = async (req: Request, res: Response) => {
     const { id } = req.params;
     const product = await prisma.product.findUnique({
       where: { id: Number(id) },
-      include: { user: true },
+      include: { 
+        user: {
+          select: {
+            id: true,
+            username: true,
+            role: true,
+            phone: true,
+            address: true,
+            premiumExpiry: true
+          }
+        }
+      },
     });
 
     if (!product) {

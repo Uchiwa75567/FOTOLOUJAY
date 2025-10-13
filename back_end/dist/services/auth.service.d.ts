@@ -3,41 +3,50 @@ export declare const authService: {
         accessToken: string;
         refreshToken: string;
         user: {
-            createdAt: Date;
-            updatedAt: Date;
+            phone: string | null;
+            address: string | null;
             id: number;
-            role: import(".prisma/client").$Enums.Role;
             username: string;
             email: string;
             password: string;
             refreshToken: string | null;
+            role: import(".prisma/client").$Enums.Role;
+            premiumExpiry: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
         };
     }>;
     register: (username: string, email: string, password: string) => Promise<{
         accessToken: string;
         refreshToken: string;
         user: {
-            createdAt: Date;
-            updatedAt: Date;
+            phone: string | null;
+            address: string | null;
             id: number;
-            role: import(".prisma/client").$Enums.Role;
             username: string;
             email: string;
             password: string;
             refreshToken: string | null;
+            role: import(".prisma/client").$Enums.Role;
+            premiumExpiry: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
         };
     }>;
     refresh: (refreshToken: string) => Promise<{
         accessToken: string;
         user: {
-            createdAt: Date;
-            updatedAt: Date;
+            phone: string | null;
+            address: string | null;
             id: number;
-            role: import(".prisma/client").$Enums.Role;
             username: string;
             email: string;
             password: string;
             refreshToken: string | null;
+            role: import(".prisma/client").$Enums.Role;
+            premiumExpiry: Date | null;
+            createdAt: Date;
+            updatedAt: Date;
         };
     }>;
 };

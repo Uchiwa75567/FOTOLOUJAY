@@ -74,24 +74,106 @@
   <section id="products" class="products-section">
     <div class="container">
       <div class="section-header">
-        <h2>Produits récents</h2>
-        <p>Découvrez les dernières offres de notre communauté</p>
+        <h2>Produits disponibles</h2>
+        <p>Découvrez les offres de notre communauté</p>
       </div>
 
-      @if (isLoading) {
+      <!-- Search Bar -->
+      <div class="search-container">
+        <div class="search-box">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery"
+            (input)="onSearch()"
+            placeholder="Rechercher un produit, vendeur..." 
+            class="search-input"
+          />
+          @if (searchQuery()) {
+            <button class="clear-search" (click)="searchQuery.set(''); onSearch()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          }
+        </div>
+        <div class="search-results-info">
+          @if (searchQuery()) {
+            <span>{{ filteredProducts.length }} résultat(s) trouvé(s)</span>
+          } @else {
+            <span>{{ allProducts.length }} produit(s) au total</span>
+          }
+        </div>
+      </div>
+
+      @if (isLoading()) {
         <div class="loading">
           <div class="spinner"></div>
         </div>
-      } @else if (products.length === 0) {
+      } @else if (displayedProducts.length === 0) {
         <div class="empty-state">
-          <p>Aucun produit disponible pour le moment</p>
+          @if (searchQuery()) {
+            <p>Aucun produit trouvé pour "{{ searchQuery() }}"</p>
+            <button class="btn btn-outline" (click)="searchQuery.set(''); onSearch()">
+              Réinitialiser la recherche
+            </button>
+          } @else {
+            <p>Aucun produit disponible pour le moment</p>
+          }
         </div>
       } @else {
         <div class="products-grid">
-          @for (product of products; track product.id) {
+          @for (product of displayedProducts; track product.id) {
             <app-product-card [product]="product"></app-product-card>
           }
         </div>
+
+        <!-- Pagination -->
+        @if (totalPages() > 1) {
+          <div class="pagination">
+            <button 
+              class="pagination-btn"
+              [disabled]="currentPage() === 1"
+              (click)="goToPage(currentPage() - 1)"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              Précédent
+            </button>
+
+            <div class="pagination-numbers">
+              @for (page of getPaginationPages(); track page) {
+                @if (page === -1) {
+                  <span class="pagination-ellipsis">...</span>
+                } @else {
+                  <button 
+                    class="pagination-number"
+                    [class.active]="page === currentPage()"
+                    (click)="goToPage(page)"
+                  >
+                    {{ page }}
+                  </button>
+                }
+              }
+            </div>
+
+            <button 
+              class="pagination-btn"
+              [disabled]="currentPage() === totalPages()"
+              (click)="goToPage(currentPage() + 1)"
+            >
+              Suivant
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+        }
       }
     </div>
   </section>

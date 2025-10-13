@@ -66,3 +66,47 @@
   font-weight: 500;
   color: var(--muted-foreground);
 }
+
+.premium-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #fcd116 0%, #00853f 100%);
+  color: white;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 8px rgba(252, 209, 22, 0.3);
+  animation: shimmer 2s infinite;
+
+  .crown-icon {
+    font-size: 1rem;
+  }
+}
+
+.premium-link {
+  background: linear-gradient(135deg, #00853f 0%, #fcd116 100%);
+  color: white !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 133, 63, 0.3);
+
+  &:hover {
+    background: linear-gradient(135deg, #006b33 0%, #e0b800 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 133, 63, 0.4);
+  }
+
+  svg {
+    fill: white;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(252, 209, 22, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(252, 209, 22, 0.5);
+  }
+}

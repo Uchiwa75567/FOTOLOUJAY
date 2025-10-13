@@ -10,18 +10,27 @@ const fs_1 = __importDefault(require("fs"));
 // === Création produit avec photo capturée (base64) ===
 const createProductWithPhoto = async (req, res) => {
     try {
-        const { title, description, photoBase64 } = req.body;
+        const { title, description, photoBase64, phone, address } = req.body;
         const userId = req.user?.id;
         // Vérification de l'utilisateur authentifié
         if (!userId) {
             return res.status(401).json({ message: "Utilisateur non authentifié" });
         }
         // Vérification obligatoire des champs
-        if (!title || !description || !photoBase64) {
-            return res.status(400).json({ message: "Titre, description et photo obligatoires" });
+        if (!title || !description || !photoBase64 || !phone || !address) {
+            return res.status(400).json({ message: "Titre, description, photo, téléphone et adresse obligatoires" });
         }
         if (description.length < 10) {
             return res.status(400).json({ message: "Description trop courte (minimum 10 caractères)" });
+        }
+        // Validation téléphone sénégalais (9 chiffres, commence par 77, 78, 76, 70 ou 75)
+        const phoneRegex = /^(77|78|76|70|75)[0-9]{7}$/;
+        if (!phoneRegex.test(phone)) {
+            return res.status(400).json({ message: "Numéro de téléphone invalide - doit être un numéro sénégalais de 9 chiffres commençant par 77, 78, 76, 70 ou 75" });
+        }
+        // Validation adresse (minimum 5 caractères)
+        if (address.length < 5) {
+            return res.status(400).json({ message: "Adresse trop courte (minimum 5 caractères)" });
         }
         // Vérification obligatoire de la photo capturée
         if (!photoBase64) {
@@ -46,6 +55,11 @@ const createProductWithPhoto = async (req, res) => {
         const buffer = Buffer.from(base64Data, 'base64');
         fs_1.default.writeFileSync(filepath, buffer);
         const photoUrl = `/uploads/${filename}`;
+        // Mettre à jour les informations de l'utilisateur
+        await prisma_1.default.user.update({
+            where: { id: userId },
+            data: { phone, address },
+        });
         // Créer le produit en PENDING pour modération manuelle
         const product = await prisma_1.default.product.create({
             data: {
@@ -92,7 +106,18 @@ const listProducts = async (req, res) => {
     try {
         const products = await prisma_1.default.product.findMany({
             where: { status: "VALID" },
-            include: { user: true },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        role: true,
+                        phone: true,
+                        address: true,
+                        premiumExpiry: true
+                    }
+                }
+            },
             orderBy: [
                 { vip: "desc" }, // VIP first
                 { createdAt: "desc" },
@@ -114,7 +139,18 @@ const getUserProducts = async (req, res) => {
         }
         const products = await prisma_1.default.product.findMany({
             where: { userId },
-            include: { user: true },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        role: true,
+                        phone: true,
+                        address: true,
+                        premiumExpiry: true
+                    }
+                }
+            },
             orderBy: { createdAt: "desc" },
         });
         res.json(products);
@@ -131,7 +167,18 @@ const getProduct = async (req, res) => {
         const { id } = req.params;
         const product = await prisma_1.default.product.findUnique({
             where: { id: Number(id) },
-            include: { user: true },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        username: true,
+                        role: true,
+                        phone: true,
+                        address: true,
+                        premiumExpiry: true
+                    }
+                }
+            },
         });
         if (!product) {
             return res.status(404).json({ message: "Produit non trouvé" });

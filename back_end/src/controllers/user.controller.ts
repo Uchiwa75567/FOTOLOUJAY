@@ -56,7 +56,7 @@ export const getUser = async (req: Request, res: Response) => {
     res.json(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Erreur lors de la récupération de l’utilisateur" });
+    res.status(500).json({ message: "Erreur lors de la récupération de l'utilisateur" });
   }
 };
 
@@ -67,7 +67,7 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(201).json(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Erreur lors de la création de l’utilisateur" });
+    res.status(500).json({ message: "Erreur lors de la création de l'utilisateur" });
   }
 };
 
@@ -79,7 +79,7 @@ export const updateUser = async (req: Request, res: Response) => {
     res.json(user);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Erreur lors de la mise à jour de l’utilisateur" });
+    res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur" });
   }
 };
 
@@ -90,6 +90,30 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.json({ message: "Utilisateur supprimé avec succès" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Erreur lors de la suppression de l’utilisateur" });
+    res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur" });
+  }
+};
+
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+    const { phone, address } = req.body;
+    
+    if (!userId) {
+      return res.status(401).json({ message: "Utilisateur non authentifié" });
+    }
+    
+    const user = await userService.updateUser(userId, { phone, address });
+    res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      role: user.role
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur lors de la mise à jour du profil" });
   }
 };

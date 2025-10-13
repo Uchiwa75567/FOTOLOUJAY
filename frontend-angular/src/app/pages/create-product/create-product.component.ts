@@ -1,10 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { CameraComponent } from '../../shared/components/camera/camera.component';
 import { ProductService } from '../../core/services/product.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-create-product',
@@ -13,9 +14,10 @@ import { ProductService } from '../../core/services/product.service';
   templateUrl: './create-product.component.html',
   styleUrls: ['./create-product.component.scss']
 })
-export class CreateProductComponent {
+export class CreateProductComponent implements OnInit {
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   productForm: FormGroup;
@@ -24,12 +26,26 @@ export class CreateProductComponent {
   isSubmitting = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
+  showContactModal = signal(false);
 
   constructor() {
     this.productForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]]
+      description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+      phone: ['', [Validators.required, Validators.pattern(/^(77|78|76|70|75)[0-9]{7}$/)]],
+      address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]]
     });
+  }
+
+  ngOnInit(): void {
+    // Pré-remplir avec les données existantes si disponibles
+    const user = this.authService.currentUser();
+    if (user?.phone) {
+      this.productForm.patchValue({ phone: user.phone });
+    }
+    if (user?.address) {
+      this.productForm.patchValue({ address: user.address });
+    }
   }
 
   openCamera(): void {
@@ -67,7 +83,9 @@ export class CreateProductComponent {
     const formData = {
       title: this.productForm.value.title,
       description: this.productForm.value.description,
-      photoBase64: this.capturedPhoto()!
+      photoBase64: this.capturedPhoto()!,
+      phone: this.productForm.value.phone,
+      address: this.productForm.value.address
     };
 
     this.productService.createProduct(formData).subscribe({
@@ -103,5 +121,13 @@ export class CreateProductComponent {
 
   get description() {
     return this.productForm.get('description');
+  }
+
+  get phone() {
+    return this.productForm.get('phone');
+  }
+
+  get address() {
+    return this.productForm.get('address');
   }
 }

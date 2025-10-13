@@ -9,6 +9,15 @@ export interface User {
   username: string;
   email: string;
   role: 'USER' | 'VIP' | 'MODERATOR' | 'ADMIN';
+  phone?: string;
+  address?: string;
+  isPremium?: boolean;
+  premiumExpiry?: string | null;
+}
+
+export interface UserProfileUpdate {
+  phone?: string;
+  address?: string;
 }
 
 interface AuthResponse {
@@ -24,6 +33,7 @@ export class AuthService {
   private readonly API_URL = environment.apiUrl;
   currentUser = signal<User | null>(null);
   isLoading = signal(true);
+  isPremium = signal<boolean>(false);
 
   constructor(
     private http: HttpClient,
@@ -99,5 +109,38 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.currentUser()?.role === 'ADMIN';
+  }
+
+  updateProfile(data: UserProfileUpdate): Observable<User> {
+    return this.http.put<User>(`${this.API_URL}/users/profile`, data)
+      .pipe(
+        tap(updatedUser => {
+          const currentUser = this.currentUser();
+          if (currentUser) {
+            const mergedUser = { ...currentUser, ...updatedUser };
+            localStorage.setItem('user', JSON.stringify(mergedUser));
+            this.currentUser.set(mergedUser);
+          }
+        })
+      );
+  }
+
+  refreshUserData(): Observable<User> {
+    return this.http.get<User>(`${this.API_URL}/users/profile`)
+      .pipe(
+        tap(user => {
+          localStorage.setItem('user', JSON.stringify(user));
+          this.currentUser.set(user);
+          this.isPremium.set(user.isPremium || false);
+        })
+      );
+  }
+
+  checkAndUpdatePremiumStatus(): void {
+    if (this.isAuthenticated()) {
+      this.refreshUserData().subscribe({
+        error: (error) => console.error('Error refreshing user data:', error)
+      });
+    }
   }
 }

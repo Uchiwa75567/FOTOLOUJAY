@@ -1,0 +1,145 @@
+<div class="premium-page">
+  <app-navbar></app-navbar>
+
+  <div class="container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="gradient-text">✨ Passez Premium</span>
+        </h1>
+        <p class="hero-subtitle">
+          Boostez votre visibilité et vendez plus rapidement avec nos fonctionnalités premium
+        </p>
+      </div>
+
+      <!-- Current Premium Status -->
+      @if (!isLoadingStatus() && premiumStatus()?.isPremium) {
+        <div class="current-status">
+          <div class="status-badge">
+            <span class="crown-icon">👑</span>
+            <div class="status-info">
+              <h3>Vous êtes Premium !</h3>
+              <p>{{ getDaysRemainingText() }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Error Message -->
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <!-- Loading State -->
+    @if (isLoadingPacks()) {
+      <div class="loading-container">
+        <div class="spinner-large"></div>
+        <p>Chargement des packs premium...</p>
+      </div>
+    }
+
+    <!-- Premium Packs -->
+    @if (!isLoadingPacks() && packs().length > 0) {
+      <div class="packs-grid">
+        @for (pack of packs(); track pack.id) {
+          <div class="pack-card" [class.popular]="isPopularPack(pack.name)">
+            @if (isPopularPack(pack.name)) {
+              <div class="popular-badge">
+                ⭐ Plus populaire
+              </div>
+            }
+
+            <div class="pack-header">
+              <h2 class="pack-name">{{ pack.name }}</h2>
+              <div class="pack-price">
+                <span class="price-amount">{{ formatPrice(pack.price) }}</span>
+                <span class="price-period">/ {{ formatDuration(pack.duration, pack.unit) }}</span>
+              </div>
+            </div>
+
+            <div class="pack-features">
+              @for (feature of getPackFeatures(pack.name); track feature) {
+                <div class="feature-item">
+                  <span class="feature-text">{{ feature }}</span>
+                </div>
+              }
+            </div>
+
+            <button
+              class="btn-purchase"
+              [class.btn-loading]="purchasingPackId() === pack.id"
+              [disabled]="purchasingPackId() !== null"
+              (click)="purchasePack(pack.id)"
+            >
+              @if (purchasingPackId() === pack.id) {
+                <span class="spinner"></span>
+                <span>Redirection...</span>
+              } @else {
+                <span>🚀 Choisir ce pack</span>
+              }
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Benefits Section -->
+    <div class="benefits-section">
+      <h2 class="section-title">Pourquoi devenir Premium ?</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">🎯</div>
+          <h3>Visibilité maximale</h3>
+          <p>Vos produits apparaissent en priorité dans les résultats de recherche</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">📊</div>
+          <h3>Statistiques détaillées</h3>
+          <p>Suivez les performances de vos produits avec des analytics avancés</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">💬</div>
+          <h3>Support prioritaire</h3>
+          <p>Bénéficiez d'une assistance rapide et personnalisée</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">✨</div>
+          <h3>Badge Premium</h3>
+          <p>Démarquez-vous avec un badge exclusif sur votre profil</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="faq-section">
+      <h2 class="section-title">Questions fréquentes</h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h3>💳 Comment fonctionne le paiement ?</h3>
+          <p>Le paiement est sécurisé via PayTech. Vous serez redirigé vers leur plateforme pour finaliser votre achat.</p>
+        </div>
+        <div class="faq-item">
+          <h3>🔄 Puis-je annuler mon abonnement ?</h3>
+          <p>Oui, vous pouvez annuler à tout moment. Votre accès premium restera actif jusqu'à la fin de la période payée.</p>
+        </div>
+        <div class="faq-item">
+          <h3>📱 Les fonctionnalités sont-elles disponibles sur mobile ?</h3>
+          <p>Absolument ! Toutes les fonctionnalités premium sont accessibles sur tous vos appareils.</p>
+        </div>
+        <div class="faq-item">
+          <h3>🎁 Y a-t-il une période d'essai ?</h3>
+          <p>Contactez notre support pour connaître les offres d'essai disponibles.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

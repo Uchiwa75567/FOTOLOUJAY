@@ -12,6 +12,7 @@ import photoRoutes from "./routes/photo.routes";
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.route";
+import premiumRoutes from "./routes/premium.routes";
 import "./cron/cleanup"; // démarre les crons
 
 const app = express();
@@ -41,6 +42,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", photoRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/premium", premiumRoutes);
 
 // Static uploads (serve images)
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));

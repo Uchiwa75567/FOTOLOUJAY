@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.createUser = exports.getUser = exports.getAllUsers = void 0;
+exports.updateProfile = exports.deleteUser = exports.updateUser = exports.createUser = exports.getUser = exports.getAllUsers = void 0;
 const userService = __importStar(require("../services/user.service"));
 const getAllUsers = async (req, res) => {
     try {
@@ -88,7 +88,7 @@ const getUser = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Erreur lors de la récupération de l’utilisateur" });
+        res.status(500).json({ message: "Erreur lors de la récupération de l'utilisateur" });
     }
 };
 exports.getUser = getUser;
@@ -100,7 +100,7 @@ const createUser = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Erreur lors de la création de l’utilisateur" });
+        res.status(500).json({ message: "Erreur lors de la création de l'utilisateur" });
     }
 };
 exports.createUser = createUser;
@@ -113,7 +113,7 @@ const updateUser = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Erreur lors de la mise à jour de l’utilisateur" });
+        res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur" });
     }
 };
 exports.updateUser = updateUser;
@@ -125,8 +125,31 @@ const deleteUser = async (req, res) => {
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Erreur lors de la suppression de l’utilisateur" });
+        res.status(500).json({ message: "Erreur lors de la suppression de l'utilisateur" });
     }
 };
 exports.deleteUser = deleteUser;
+const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        const { phone, address } = req.body;
+        if (!userId) {
+            return res.status(401).json({ message: "Utilisateur non authentifié" });
+        }
+        const user = await userService.updateUser(userId, { phone, address });
+        res.json({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            phone: user.phone,
+            address: user.address,
+            role: user.role
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Erreur lors de la mise à jour du profil" });
+    }
+};
+exports.updateProfile = updateProfile;
 //# sourceMappingURL=user.controller.js.map
