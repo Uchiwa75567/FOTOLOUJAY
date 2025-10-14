@@ -140,6 +140,65 @@
               </div>
 
               <div class="form-group">
+                <label for="condition">État du produit *</label>
+                <div class="condition-options">
+                  <label class="condition-option" [class.selected]="condition?.value === 'good'">
+                    <input 
+                      type="radio" 
+                      name="condition" 
+                      value="good" 
+                      formControlName="condition"
+                      class="condition-radio"
+                    />
+                    <div class="condition-card">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                      </svg>
+                      <span class="condition-label">Bon état</span>
+                      <span class="condition-desc">Comme neuf</span>
+                    </div>
+                  </label>
+                  
+                  <label class="condition-option" [class.selected]="condition?.value === 'average'">
+                    <input 
+                      type="radio" 
+                      name="condition" 
+                      value="average" 
+                      formControlName="condition"
+                      class="condition-radio"
+                    />
+                    <div class="condition-card">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="8" y1="15" x2="16" y2="15"></line>
+                      </svg>
+                      <span class="condition-label">État moyen</span>
+                      <span class="condition-desc">Quelques traces</span>
+                    </div>
+                  </label>
+                  
+                  <label class="condition-option" [class.selected]="condition?.value === 'poor'">
+                    <input 
+                      type="radio" 
+                      name="condition" 
+                      value="poor" 
+                      formControlName="condition"
+                      class="condition-radio"
+                    />
+                    <div class="condition-card">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                      </svg>
+                      <span class="condition-label">Mauvais état</span>
+                      <span class="condition-desc">Usé ou abîmé</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group">
                 <label for="phone">📱 Numéro de téléphone *</label>
                 <input 
                   type="tel" 

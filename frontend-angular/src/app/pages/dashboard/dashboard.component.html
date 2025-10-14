@@ -3,112 +3,168 @@
 
   <div class="container dashboard-container">
     <div class="dashboard-header">
-      <h1>Mon tableau de bord</h1>
-      <p>Gérez vos produits et suivez vos publications</p>
+      <div class="header-content">
+        <h1>Mes annonces</h1>
+        <p>Gérez vos annonces et suivez vos publications</p>
+      </div>
+      <a [routerLink]="'/create-product'" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+        <span>Nouvelle annonce</span>
+      </a>
     </div>
 
     <!-- Stats Cards -->
     <div class="stats-grid">
-      <div class="stat-card card">
-        <div class="stat-header">
-          <span class="stat-title">Total produits</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="7" height="7"></rect>
             <rect x="14" y="3" width="7" height="7"></rect>
             <rect x="14" y="14" width="7" height="7"></rect>
             <rect x="3" y="14" width="7" height="7"></rect>
           </svg>
         </div>
-        <div class="stat-value">{{ products.length }}</div>
+        <div class="stat-content">
+          <span class="stat-label">Total</span>
+          <span class="stat-value">{{ products.length }}</span>
+        </div>
       </div>
 
-      <div class="stat-card card">
-        <div class="stat-header">
-          <span class="stat-title">En attente</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="stat-card stat-card-warning">
+        <div class="stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
         </div>
-        <div class="stat-value">{{ pendingCount }}</div>
+        <div class="stat-content">
+          <span class="stat-label">En attente</span>
+          <span class="stat-value">{{ pendingCount }}</span>
+        </div>
       </div>
 
-      <div class="stat-card card">
-        <div class="stat-header">
-          <span class="stat-title">Validés</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="stat-card stat-card-success">
+        <div class="stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
         </div>
-        <div class="stat-value">{{ validCount }}</div>
+        <div class="stat-content">
+          <span class="stat-label">Validées</span>
+          <span class="stat-value">{{ validCount }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card-danger">
+        <div class="stat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <div class="stat-content">
+          <span class="stat-label">Rejetées</span>
+          <span class="stat-value">{{ deletedCount }}</span>
+        </div>
       </div>
     </div>
 
     <!-- Tabs -->
-    <div class="tabs">
-      <button
-        class="tab"
-        [class.active]="activeTab === 'all'"
-        (click)="setActiveTab('all')"
-      >
-        Tous ({{ products.length }})
-      </button>
-      <button
-        class="tab"
-        [class.active]="activeTab === 'pending'"
-        (click)="setActiveTab('pending')"
-      >
-        En attente ({{ pendingCount }})
-      </button>
-      <button
-        class="tab"
-        [class.active]="activeTab === 'valid'"
-        (click)="setActiveTab('valid')"
-      >
-        Validés ({{ validCount }})
-      </button>
-      <button
-        class="tab"
-        [class.active]="activeTab === 'deleted'"
-        (click)="setActiveTab('deleted')"
-      >
-        Rejetés ({{ deletedCount }})
-      </button>
+    <div class="tabs-container">
+      <div class="tabs">
+        <button
+          class="tab"
+          [class.active]="activeTab === 'all'"
+          (click)="setActiveTab('all')"
+        >
+          <span>Toutes</span>
+          <span class="tab-count">{{ products.length }}</span>
+        </button>
+        <button
+          class="tab"
+          [class.active]="activeTab === 'pending'"
+          (click)="setActiveTab('pending')"
+        >
+          <span>En attente</span>
+          <span class="tab-count">{{ pendingCount }}</span>
+        </button>
+        <button
+          class="tab"
+          [class.active]="activeTab === 'valid'"
+          (click)="setActiveTab('valid')"
+        >
+          <span>Validées</span>
+          <span class="tab-count">{{ validCount }}</span>
+        </button>
+        <button
+          class="tab"
+          [class.active]="activeTab === 'deleted'"
+          (click)="setActiveTab('deleted')"
+        >
+          <span>Rejetées</span>
+          <span class="tab-count">{{ deletedCount }}</span>
+        </button>
+      </div>
     </div>
 
     <!-- Products Content -->
     <div class="tab-content">
       @if (isLoading) {
         <div class="loading">
-          <div class="spinner"></div>
+          <div class="spinner-large"></div>
+          <p>Chargement de vos annonces...</p>
         </div>
       } @else if (filteredProducts.length === 0) {
         <div class="empty-state card">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
+          <h3>
+            @if (activeTab === 'all') {
+              Aucune annonce
+            } @else if (activeTab === 'pending') {
+              Aucune annonce en attente
+            } @else if (activeTab === 'valid') {
+              Aucune annonce validée
+            } @else {
+              Aucune annonce rejetée
+            }
+          </h3>
           <p>
             @if (activeTab === 'all') {
-              Vous n'avez pas encore de produits
-            } @else if (activeTab === 'pending') {
-              Aucun produit en attente de validation
-            } @else if (activeTab === 'valid') {
-              Aucun produit validé
+              Commencez par créer votre première annonce
             } @else {
-              Aucun produit rejeté
+              Vous n'avez pas d'annonce dans cette catégorie
             }
           </p>
+          @if (activeTab === 'all') {
+            <a [routerLink]="'/create-product'" class="btn btn-primary">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              <span>Créer une annonce</span>
+            </a>
+          }
         </div>
       } @else {
         <div class="products-grid">
           @for (product of filteredProducts; track product.id) {
             <div class="product-wrapper">
               <app-product-card [product]="product"></app-product-card>
-              <span class="status-badge" [ngClass]="getStatusBadgeClass(product.status)">
-                {{ getStatusLabel(product.status) }}
-              </span>
+              <div class="product-status">
+                <span class="status-badge" [ngClass]="getStatusBadgeClass(product.status)">
+                  {{ getStatusLabel(product.status) }}
+                </span>
+              </div>
             </div>
           }
         </div>

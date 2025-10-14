@@ -1,21 +1,34 @@
-<div class="product-card">
-  <div class="product-image">
-    <img [src]="getImageUrl(product.photoUrl)" [alt]="product.title" />
-  </div>
-  <div class="product-content">
-    <h3 class="product-title">{{ product.title }}</h3>
-    <p class="product-description">{{ product.description }}</p>
-    <div class="product-footer">
-      <span class="product-views">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<a [routerLink]="['/product', product.id]" class="product-card">
+  <div class="product-image-wrapper">
+    <img [src]="getImageUrl(product.photoUrl)" [alt]="product.title" class="product-image" />
+    <div class="product-overlay">
+      <div class="product-views-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
-        {{ product.views }} vues
-      </span>
+        <span>{{ product.views }}</span>
+      </div>
+    </div>
+  </a>
+  
+  <div class="product-content">
+    <h3 class="product-title">{{ product.title }}</h3>
+    <p class="product-description">{{ product.description }}</p>
+    
+    <div class="product-footer">
       @if (product.user) {
-        <span class="product-author">Par {{ product.user.username }}</span>
+        <div class="product-author">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>{{ product.user.username }}</span>
+        </div>
       }
+      <div class="product-date">
+        {{ product.createdAt | date:'dd/MM/yyyy' }}
+      </div>
     </div>
   </div>
 </div>

@@ -5,66 +5,129 @@
   <section class="hero">
     <div class="container">
       <div class="hero-content">
-        <h1 class="hero-title">
-          Vendez vos produits avec <span class="text-primary">photos authentiques</span>
-        </h1>
-        <p class="hero-description">
-          FOTOL JAY est la marketplace qui valorise l'authenticité. Publiez vos produits avec des photos prises en
-          temps réel et connectez-vous avec des acheteurs de confiance.
-        </p>
-        <div class="hero-actions">
-          <a [routerLink]="authService.isAuthenticated() ? '/create-product' : '/login'" 
-             [queryParams]="!authService.isAuthenticated() ? {returnUrl: '/create-product'} : null"
-             class="btn btn-primary btn-lg">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-              <circle cx="12" cy="13" r="4"></circle>
-            </svg>
-            Commencer à vendre
-          </a>
-          <a href="#products" class="btn btn-outline btn-lg">Découvrir les produits</a>
+        <div class="hero-text">
+          <h1 class="hero-title">
+            Achetez et vendez près de chez vous
+          </h1>
+          <p class="hero-subtitle">
+            Des milliers d'annonces authentiques avec photos en temps réel
+          </p>
+
+          <!-- Search Bar -->
+          <div class="hero-search">
+            <div class="search-input-wrapper">
+              <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input
+                type="text"
+                [(ngModel)]="searchQuery"
+                (input)="onSearch()"
+                placeholder="Rechercher un produit, un vendeur..."
+                class="search-input"
+              />
+              @if (searchQuery()) {
+                <button class="clear-btn" (click)="searchQuery.set(''); onSearch()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              }
+            </div>
+            <button class="search-btn" (click)="onSearch()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <span>Rechercher</span>
+            </button>
+          </div>
+
+          <div class="hero-actions">
+            <a [routerLink]="authService.isAuthenticated() ? '/create-product' : '/login'"
+               [queryParams]="!authService.isAuthenticated() ? {returnUrl: '/create-product'} : null"
+               class="btn btn-primary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              <span>Déposer une annonce</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1644984875410-e11486d2b94f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHwxfHxtYXJrZXRwbGFjZSUyMHNob3BwaW5nJTIwZWNvbW1lcmNlJTIwb25saW5lJTIwc3RvcmV8ZW58MHwwfHx8MTc2MDQ0MTE2Nnww&ixlib=rb-4.1.0&q=85" 
+               alt="Jonny Gios on Unsplash" 
+               style="width: 100%; height: auto;" />
         </div>
       </div>
 
-      <!-- Features -->
-      <div class="features">
-        <div class="feature">
+      <!-- Stats -->
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">{{ allProducts.length }}+</div>
+          <div class="stat-label">Annonces actives</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">5K+</div>
+          <div class="stat-label">Utilisateurs</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">98%</div>
+          <div class="stat-label">Satisfaction</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <div class="features-grid">
+        <div class="feature-card">
           <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
               <circle cx="12" cy="13" r="4"></circle>
             </svg>
           </div>
           <h3>Photos authentiques</h3>
-          <p>Capturez vos produits en temps réel avec votre caméra</p>
+          <p>Capturez vos produits en temps réel</p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-success">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
             </svg>
           </div>
           <h3>Modération active</h3>
-          <p>Tous les produits sont vérifiés avant publication</p>
+          <p>Tous les produits sont vérifiés</p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-warning">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
           </div>
           <h3>Publication rapide</h3>
-          <p>Publiez en quelques secondes depuis votre mobile</p>
+          <p>Publiez en quelques secondes</p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-premium">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
           </div>
-          <h3>Statut VIP</h3>
-          <p>Bénéficiez d'une visibilité prioritaire</p>
+          <h3>Statut Premium</h3>
+          <p>Visibilité prioritaire et avantages exclusifs</p>
         </div>
       </div>
     </div>
@@ -74,55 +137,41 @@
   <section id="products" class="products-section">
     <div class="container">
       <div class="section-header">
-        <h2>Produits disponibles</h2>
-        <p>Découvrez les offres de notre communauté</p>
-      </div>
-
-      <!-- Search Bar -->
-      <div class="search-container">
-        <div class="search-box">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <input 
-            type="text" 
-            [(ngModel)]="searchQuery"
-            (input)="onSearch()"
-            placeholder="Rechercher un produit, vendeur..." 
-            class="search-input"
-          />
-          @if (searchQuery()) {
-            <button class="clear-search" (click)="searchQuery.set(''); onSearch()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          }
-        </div>
-        <div class="search-results-info">
-          @if (searchQuery()) {
-            <span>{{ filteredProducts.length }} résultat(s) trouvé(s)</span>
-          } @else {
-            <span>{{ allProducts.length }} produit(s) au total</span>
-          }
-        </div>
+        <h2>Toutes les annonces</h2>
+        @if (searchQuery()) {
+          <p class="search-results">
+            <span class="results-count">{{ filteredProducts.length }}</span> résultat(s) pour "<strong>{{ searchQuery() }}</strong>"
+          </p>
+        } @else {
+          <p>Découvrez les offres de notre communauté</p>
+        }
       </div>
 
       @if (isLoading()) {
-        <div class="loading">
-          <div class="spinner"></div>
+        <div class="loading-container">
+          <div class="spinner-large"></div>
+          <p>Chargement des annonces...</p>
         </div>
       } @else if (displayedProducts.length === 0) {
-        <div class="empty-state">
+        <div class="empty-state card">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
           @if (searchQuery()) {
-            <p>Aucun produit trouvé pour "{{ searchQuery() }}"</p>
-            <button class="btn btn-outline" (click)="searchQuery.set(''); onSearch()">
-              Réinitialiser la recherche
+            <h3>Aucun résultat trouvé</h3>
+            <p>Aucune annonce ne correspond à votre recherche</p>
+            <button class="btn btn-primary" (click)="searchQuery.set(''); onSearch()">
+              Voir toutes les annonces
             </button>
           } @else {
-            <p>Aucun produit disponible pour le moment</p>
+            <h3>Aucune annonce disponible</h3>
+            <p>Soyez le premier à publier une annonce !</p>
+            <a [routerLink]="authService.isAuthenticated() ? '/create-product' : '/login'"
+               [queryParams]="!authService.isAuthenticated() ? {returnUrl: '/create-product'} : null"
+               class="btn btn-primary">
+              Déposer une annonce
+            </a>
           }
         </div>
       } @else {
@@ -134,44 +183,46 @@
 
         <!-- Pagination -->
         @if (totalPages() > 1) {
-          <div class="pagination">
-            <button 
-              class="pagination-btn"
-              [disabled]="currentPage() === 1"
-              (click)="goToPage(currentPage() - 1)"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-              Précédent
-            </button>
+          <div class="pagination-wrapper">
+            <div class="pagination">
+              <button
+                class="pagination-btn"
+                [disabled]="currentPage() === 1"
+                (click)="goToPage(currentPage() - 1)"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                <span>Précédent</span>
+              </button>
 
-            <div class="pagination-numbers">
-              @for (page of getPaginationPages(); track page) {
-                @if (page === -1) {
-                  <span class="pagination-ellipsis">...</span>
-                } @else {
-                  <button 
-                    class="pagination-number"
-                    [class.active]="page === currentPage()"
-                    (click)="goToPage(page)"
-                  >
-                    {{ page }}
-                  </button>
+              <div class="pagination-numbers">
+                @for (page of getPaginationPages(); track page) {
+                  @if (page === -1) {
+                    <span class="pagination-ellipsis">...</span>
+                  } @else {
+                    <button
+                      class="pagination-number"
+                      [class.active]="page === currentPage()"
+                      (click)="goToPage(page)"
+                    >
+                      {{ page }}
+                    </button>
+                  }
                 }
-              }
-            </div>
+              </div>
 
-            <button 
-              class="pagination-btn"
-              [disabled]="currentPage() === totalPages()"
-              (click)="goToPage(currentPage() + 1)"
-            >
-              Suivant
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
+              <button
+                class="pagination-btn"
+                [disabled]="currentPage() === totalPages()"
+                (click)="goToPage(currentPage() + 1)"
+              >
+                <span>Suivant</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
           </div>
         }
       }

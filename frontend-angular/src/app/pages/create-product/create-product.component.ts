@@ -32,6 +32,7 @@ export class CreateProductComponent implements OnInit {
     this.productForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+      condition: ['good', [Validators.required]],
       phone: ['', [Validators.required, Validators.pattern(/^(77|78|76|70|75)[0-9]{7}$/)]],
       address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]]
     });
@@ -83,6 +84,7 @@ export class CreateProductComponent implements OnInit {
     const formData = {
       title: this.productForm.value.title,
       description: this.productForm.value.description,
+      condition: this.productForm.value.condition,
       photoBase64: this.capturedPhoto()!,
       phone: this.productForm.value.phone,
       address: this.productForm.value.address
@@ -129,5 +131,9 @@ export class CreateProductComponent implements OnInit {
 
   get address() {
     return this.productForm.get('address');
+  }
+
+  get condition() {
+    return this.productForm.get('condition');
   }
 }

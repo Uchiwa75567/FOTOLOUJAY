@@ -5,3 +5,4 @@ export const authRepository = {
     return prisma.user.findUnique({ where: { email } });
   },
 };
+

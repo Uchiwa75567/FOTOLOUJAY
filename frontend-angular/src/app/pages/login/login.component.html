@@ -1,78 +1,52 @@
-<div class="auth-container">
-  <div class="auth-background">
-    <div class="floating-shapes">
-      <div class="shape shape-1"></div>
-      <div class="shape shape-2"></div>
-      <div class="shape shape-3"></div>
-    </div>
-  </div>
-
-  <div class="auth-content">
+<div class="auth-page">
+  <div class="auth-container">
     <div class="auth-left">
-      <div class="brand-section fade-in-up">
-        <div class="brand-logo">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
+      <div class="auth-brand">
+        <div class="brand-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
         </div>
-        <h1 class="brand-title">FOTOL JAY</h1>
-        <p class="brand-subtitle">La plateforme de partage photo premium</p>
+        <h1>FOTOLJAY</h1>
+        <p>Achetez et vendez près de chez vous</p>
       </div>
 
-      <div class="features-section slide-in-left">
-        <div class="feature-item">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
-              <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-            </svg>
-          </div>
-          <div class="feature-text">
-            <h3>Partagez vos photos</h3>
-            <p>Publiez et partagez vos meilleurs clichés</p>
-          </div>
-        </div>
+      <div class="auth-illustration">
+        <img src="https://images.unsplash.com/photo-1590483200604-e9e60b6cb2dc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTAwNDR8MHwxfHNlYXJjaHwyfHxtYXJrZXRwbGFjZSUyMHNob3BwaW5nJTIwZWNvbW1lcmNlJTIwb25saW5lJTIwc3RvcmV8ZW58MHwwfHx8MTc2MDQ0MTE2Nnww&ixlib=rb-4.1.0&q=85" 
+             alt="Glen Carrie on Unsplash" 
+             style="width: 100%; height: auto;" />
+      </div>
 
+      <div class="auth-features">
         <div class="feature-item">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-              <path d="M12 17h.01"></path>
-            </svg>
-          </div>
-          <div class="feature-text">
-            <h3>Modération intelligente</h3>
-            <p>Contenu validé par notre équipe</p>
-          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span>Photos authentiques</span>
         </div>
-
         <div class="feature-item">
-          <div class="feature-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-            </svg>
-          </div>
-          <div class="feature-text">
-            <h3>Premium disponible</h3>
-            <p>Accédez à des fonctionnalités avancées</p>
-          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <span>Modération active</span>
+        </div>
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Publication rapide</span>
         </div>
       </div>
     </div>
 
-    <div class="auth-right slide-in-right">
+    <div class="auth-right">
       <div class="auth-card">
         <div class="auth-header">
-          <div class="auth-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-              <polyline points="10,17 15,12 10,7"></polyline>
-              <line x1="15" x2="3" y1="12" y2="12"></line>
-            </svg>
-          </div>
           <h2>Connexion</h2>
-          <p>Accédez à votre compte FOTOL JAY</p>
+          <p>Connectez-vous à votre compte</p>
         </div>
 
         <form (ngSubmit)="onSubmit()" class="auth-form">
@@ -90,7 +64,7 @@
           <div class="form-group">
             <label for="email">Adresse email</label>
             <div class="input-wrapper">
-              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" stroke-width="2">
+              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
@@ -110,9 +84,8 @@
           <div class="form-group">
             <label for="password">Mot de passe</label>
             <div class="input-wrapper">
-              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" stroke-width="2">
+              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <circle cx="12" cy="16" r="1"></circle>
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
               <input
@@ -131,12 +104,12 @@
           <button type="submit" class="btn btn-primary btn-full" [disabled]="isLoading">
             @if (isLoading) {
               <div class="spinner"></div>
-              <span>Connexion en cours...</span>
+              <span>Connexion...</span>
             } @else {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                <polyline points="10,17 15,12 10,7"></polyline>
-                <line x1="15" x2="3" y1="12" y2="12"></line>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
               </svg>
               <span>Se connecter</span>
             }
