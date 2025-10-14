@@ -1,7 +1,6 @@
 .auth-page {
   min-height: 100vh;
   background: var(--background-secondary);
-  overflow: hidden; // Prevent scrolling
 }
 
 .auth-container {
@@ -22,7 +21,6 @@
   justify-content: center;
   align-items: center;
   border-right: 1px solid var(--border);
-  overflow-y: auto; // Allow scrolling within left panel if needed
 
   @media (max-width: 1024px) {
     padding: 3rem 2rem;
@@ -139,7 +137,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-y: auto; // Allow scrolling within right panel if needed
 
   @media (max-width: 1024px) {
     padding: 3rem 2rem;
