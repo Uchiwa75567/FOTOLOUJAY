@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { AdminService } from '../../core/services/admin.service';
 import type { Product } from '../../core/services/product.service';
@@ -14,6 +15,7 @@ import type { Product } from '../../core/services/product.service';
 })
 export class ModerationComponent implements OnInit {
   private adminService = inject(AdminService);
+  private router = inject(Router);
 
   pendingProducts = signal<Product[]>([]);
   isLoading = signal(true);
@@ -102,6 +104,10 @@ export class ModerationComponent implements OnInit {
         alert('Erreur lors du rejet du produit');
       }
     });
+  }
+
+  viewProductDetails(product: Product): void {
+    this.router.navigate(['/product', product.id]);
   }
 
   getImageUrl(photoUrl: string): string {

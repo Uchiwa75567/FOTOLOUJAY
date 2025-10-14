@@ -41,7 +41,7 @@ model Product {
   status         Status    @default(PENDING)
   views          Int       @default(0)
   vip            Boolean   @default(false)
-  rejectionReason String?  // Raison de rejet par l'IA
+  rejectionReason String?  
   user           User      @relation(fields: [userId], references: [id])
   userId         Int
   createdAt      DateTime  @default(now())

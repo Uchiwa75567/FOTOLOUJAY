@@ -28,19 +28,19 @@
 
       <div class="products-grid">
         @for (product of pendingProducts(); track product.id) {
-          <div class="product-card card">
+          <div class="product-card card" (click)="viewProductDetails(product)">
             <div class="product-image">
               <img [src]="getImageUrl(product.photoUrl)" [alt]="product.title" />
             </div>
-            
+
             <div class="product-content">
               <div class="product-header">
                 <h3>{{ product.title }}</h3>
                 <span class="product-date">{{ product.createdAt | date:'short' }}</span>
               </div>
-              
+
               <p class="product-description">{{ product.description }}</p>
-              
+
               <div class="product-user">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -49,7 +49,7 @@
                 <span>{{ product.user?.username || 'Utilisateur inconnu' }}</span>
               </div>
 
-              <div class="product-actions">
+              <div class="product-actions" (click)="$event.stopPropagation()">
                 <button class="btn btn-success" (click)="openValidateModal(product)">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="20 6 9 17 4 12"></polyline>
@@ -79,20 +79,20 @@
           <h2>✅ Valider le produit</h2>
           <button class="close-btn" (click)="closeModals()">×</button>
         </div>
-        
+
         <div class="modal-body">
           <div class="product-preview">
             <img [src]="getImageUrl(selectedProduct()!.photoUrl)" [alt]="selectedProduct()!.title" />
           </div>
-          
+
           <div class="form-group">
             <label>Titre</label>
             <input type="text" [value]="selectedProduct()!.title" disabled />
           </div>
-          
+
           <div class="form-group">
             <label>Description (modifiable)</label>
-            <textarea 
+            <textarea
               [(ngModel)]="editedDescription"
               rows="4"
               placeholder="Modifiez la description si nécessaire"
@@ -100,7 +100,7 @@
             <small>Vous pouvez améliorer la description avant validation</small>
           </div>
         </div>
-        
+
         <div class="modal-footer">
           <button class="btn btn-secondary" (click)="closeModals()" [disabled]="isSubmitting()">
             Annuler
@@ -124,20 +124,20 @@
           <h2>❌ Rejeter le produit</h2>
           <button class="close-btn" (click)="closeModals()">×</button>
         </div>
-        
+
         <div class="modal-body">
           <div class="product-preview">
             <img [src]="getImageUrl(selectedProduct()!.photoUrl)" [alt]="selectedProduct()!.title" />
           </div>
-          
+
           <div class="form-group">
             <label>Titre</label>
             <input type="text" [value]="selectedProduct()!.title" disabled />
           </div>
-          
+
           <div class="form-group">
             <label>Raison du rejet (optionnel)</label>
-            <textarea 
+            <textarea
               [(ngModel)]="rejectionReason"
               rows="4"
               placeholder="Expliquez pourquoi ce produit est rejeté..."
@@ -145,7 +145,7 @@
             <small>Cette raison sera envoyée à l'utilisateur par email</small>
           </div>
         </div>
-        
+
         <div class="modal-footer">
           <button class="btn btn-secondary" (click)="closeModals()" [disabled]="isSubmitting()">
             Annuler

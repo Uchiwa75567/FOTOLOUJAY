@@ -31,14 +31,9 @@ export class ProductDetailComponent implements OnInit {
 
   loadProduct(id: number): void {
     this.isLoading.set(true);
-    this.productService.getProducts().subscribe({
-      next: (products) => {
-        const product = products.find(p => p.id === id);
-        if (product) {
-          this.product.set(product);
-        } else {
-          this.error.set('Produit non trouvé');
-        }
+    this.productService.getProduct(id).subscribe({
+      next: (product) => {
+        this.product.set(product);
         this.isLoading.set(false);
       },
       error: (err) => {
