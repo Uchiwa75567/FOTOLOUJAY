@@ -61,7 +61,7 @@ exports.authService = {
         });
         return { accessToken, refreshToken, user };
     },
-    register: async (username, email, password) => {
+    register: async (username, email, password, phone, address) => {
         // Check if user already exists
         const existingUser = await auth_repository_1.authRepository.findByEmail(email);
         if (existingUser)
@@ -73,6 +73,8 @@ exports.authService = {
             username,
             email,
             password: hashedPassword,
+            phone,
+            address,
         });
         // Générer access et refresh tokens
         const accessToken = (0, generateToken_1.generateAccessToken)(user.id, user.role);

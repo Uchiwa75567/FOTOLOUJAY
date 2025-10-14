@@ -20,6 +20,8 @@ const create = async (data) => {
             email: data.email,
             password: data.password,
             role: data.role || "USER",
+            phone: data.phone,
+            address: data.address,
         },
     });
 };

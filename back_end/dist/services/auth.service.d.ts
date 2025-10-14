@@ -16,7 +16,7 @@ export declare const authService: {
             updatedAt: Date;
         };
     }>;
-    register: (username: string, email: string, password: string) => Promise<{
+    register: (username: string, email: string, password: string, phone?: string, address?: string) => Promise<{
         accessToken: string;
         refreshToken: string;
         user: {

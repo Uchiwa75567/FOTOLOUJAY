@@ -198,49 +198,7 @@
                 </div>
               </div>
 
-              <div class="form-group">
-                <label for="phone">📱 Numéro de téléphone *</label>
-                <input 
-                  type="tel" 
-                  id="phone" 
-                  formControlName="phone"
-                  class="input"
-                  placeholder="77 123 45 67"
-                  [class.input-error]="phone?.invalid && phone?.touched"
-                />
-                @if (phone?.invalid && phone?.touched) {
-                  <span class="error-text">
-                    @if (phone?.errors?.['required']) {
-                      Le numéro de téléphone est obligatoire
-                    }
-                    @if (phone?.errors?.['pattern']) {
-                      Format invalide - doit commencer par 77, 78, 76, 70 ou 75 (9 chiffres)
-                    }
-                  </span>
-                }
-              </div>
 
-              <div class="form-group">
-                <label for="address">📍 Adresse de livraison *</label>
-                <textarea 
-                  id="address" 
-                  formControlName="address"
-                  class="input textarea"
-                  rows="3"
-                  placeholder="Votre adresse complète (quartier, ville)"
-                  [class.input-error]="address?.invalid && address?.touched"
-                ></textarea>
-                @if (address?.invalid && address?.touched) {
-                  <span class="error-text">
-                    @if (address?.errors?.['required']) {
-                      L'adresse est obligatoire
-                    }
-                    @if (address?.errors?.['minlength']) {
-                      L'adresse doit contenir au moins 5 caractères
-                    }
-                  </span>
-                }
-              </div>
 
               <div class="form-info">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

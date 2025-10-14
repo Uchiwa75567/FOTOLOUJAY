@@ -45,7 +45,7 @@ export class AuthService {
   private loadUserFromStorage(): void {
     const userStr = localStorage.getItem('user');
     const token = localStorage.getItem('accessToken');
-    
+
     if (userStr && token) {
       this.currentUser.set(JSON.parse(userStr));
     }
@@ -61,8 +61,8 @@ export class AuthService {
       );
   }
 
-  register(username: string, email: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/auth/register`, { username, email, password })
+  register(username: string, email: string, password: string, phone?: string, address?: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.API_URL}/auth/register`, { username, email, password, phone, address })
       .pipe(
         tap(response => {
           this.setAuthData(response);

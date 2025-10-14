@@ -18,15 +18,26 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const register = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, phone, address } = req.body;
 
   // Validation des champs obligatoires
-  if (!username || !email || !password) {
-    return res.status(400).json({ message: "Username, email et mot de passe obligatoires" });
+  if (!username || !email || !password || !phone || !address) {
+    return res.status(400).json({ message: "Username, email, mot de passe, téléphone et adresse obligatoires" });
+  }
+
+  // Validation téléphone sénégalais (9 chiffres, commence par 77, 78, 76, 70 ou 75)
+  const phoneRegex = /^(77|78|76|70|75)[0-9]{7}$/;
+  if (!phoneRegex.test(phone)) {
+    return res.status(400).json({ message: "Numéro de téléphone invalide - doit être un numéro sénégalais de 9 chiffres commençant par 77, 78, 76, 70 ou 75" });
+  }
+
+  // Validation adresse (minimum 5 caractères)
+  if (address.length < 5) {
+    return res.status(400).json({ message: "Adresse trop courte (minimum 5 caractères)" });
   }
 
   try {
-    const result = await authService.register(username, email, password);
+    const result = await authService.register(username, email, password, phone, address);
     res.status(201).json(result);
   } catch (error: any) {
     res.status(400).json({ message: error.message });

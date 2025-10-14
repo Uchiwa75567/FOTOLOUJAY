@@ -32,21 +32,12 @@ export class CreateProductComponent implements OnInit {
     this.productForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
-      condition: ['good', [Validators.required]],
-      phone: ['', [Validators.required, Validators.pattern(/^(77|78|76|70|75)[0-9]{7}$/)]],
-      address: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(200)]]
+      condition: ['good', [Validators.required]]
     });
   }
 
   ngOnInit(): void {
-    // Pré-remplir avec les données existantes si disponibles
-    const user = this.authService.currentUser();
-    if (user?.phone) {
-      this.productForm.patchValue({ phone: user.phone });
-    }
-    if (user?.address) {
-      this.productForm.patchValue({ address: user.address });
-    }
+    // No need to pre-fill phone and address as they are removed from the form
   }
 
   openCamera(): void {
@@ -85,9 +76,7 @@ export class CreateProductComponent implements OnInit {
       title: this.productForm.value.title,
       description: this.productForm.value.description,
       condition: this.productForm.value.condition,
-      photoBase64: this.capturedPhoto()!,
-      phone: this.productForm.value.phone,
-      address: this.productForm.value.address
+      photoBase64: this.capturedPhoto()!
     };
 
     this.productService.createProduct(formData).subscribe({
@@ -123,14 +112,6 @@ export class CreateProductComponent implements OnInit {
 
   get description() {
     return this.productForm.get('description');
-  }
-
-  get phone() {
-    return this.productForm.get('phone');
-  }
-
-  get address() {
-    return this.productForm.get('address');
   }
 
   get condition() {

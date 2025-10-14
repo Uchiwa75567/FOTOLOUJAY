@@ -472,8 +472,8 @@
   }
 
   &.active {
-    background: var(--primary);
-    color: var(--text-primary);
+    background: var(--yellow);
+    color: var(--foreground);
     box-shadow: var(--shadow-yellow);
   }
 }

@@ -9,18 +9,20 @@ export const findById = async (id: number) => {
   return prisma.user.findUnique({ where: { id } });
 };
 
-export const create = async (data: { username: string; email: string; password: string; role?: Role }) => {
+export const create = async (data: { username: string; email: string; password: string; role?: Role; phone?: string; address?: string }) => {
   return prisma.user.create({
     data: {
       username: data.username,
       email: data.email,
       password: data.password,
       role: data.role || "USER",
+      phone: data.phone,
+      address: data.address,
     },
   });
 };
 
-export const update = async (id: number, data: Partial<{ username: string; email: string; password: string; role: Role }>) => {
+export const update = async (id: number, data: Partial<{ username: string; email: string; password: string; role: Role; phone?: string; address?: string }>) => {
   return prisma.user.update({
     where: { id },
     data,

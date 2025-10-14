@@ -18,11 +18,13 @@ export class RegisterComponent {
   username = '';
   email = '';
   password = '';
+  phone = '';
+  address = '';
   error = '';
   isLoading = false;
 
   onSubmit(): void {
-    if (!this.username || !this.email || !this.password) {
+    if (!this.username || !this.email || !this.password || !this.phone || !this.address) {
       this.error = 'Veuillez remplir tous les champs';
       return;
     }
@@ -32,10 +34,23 @@ export class RegisterComponent {
       return;
     }
 
+    // Validation téléphone sénégalais
+    const phoneRegex = /^(77|78|76|70|75)[0-9]{7}$/;
+    if (!phoneRegex.test(this.phone)) {
+      this.error = 'Numéro de téléphone invalide - doit être un numéro sénégalais de 9 chiffres commençant par 77, 78, 76, 70 ou 75';
+      return;
+    }
+
+    // Validation adresse
+    if (this.address.length < 5) {
+      this.error = 'Adresse trop courte (minimum 5 caractères)';
+      return;
+    }
+
     this.error = '';
     this.isLoading = true;
 
-    this.authService.register(this.username, this.email, this.password).subscribe({
+    this.authService.register(this.username, this.email, this.password, this.phone, this.address).subscribe({
       next: () => {
         this.router.navigate(['/dashboard']);
       },

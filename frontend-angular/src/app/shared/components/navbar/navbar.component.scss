@@ -86,8 +86,8 @@
   }
 
   &.active {
-    background: var(--background-tertiary);
-    color: var(--text-primary);
+    background: var(--yellow);
+    color: var(--foreground);
     font-weight: 600;
   }
 }

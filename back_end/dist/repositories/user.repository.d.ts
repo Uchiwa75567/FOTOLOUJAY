@@ -30,6 +30,8 @@ export declare const create: (data: {
     email: string;
     password: string;
     role?: Role;
+    phone?: string;
+    address?: string;
 }) => Promise<{
     phone: string | null;
     address: string | null;
@@ -48,6 +50,8 @@ export declare const update: (id: number, data: Partial<{
     email: string;
     password: string;
     role: Role;
+    phone?: string;
+    address?: string;
 }>) => Promise<{
     phone: string | null;
     address: string | null;
