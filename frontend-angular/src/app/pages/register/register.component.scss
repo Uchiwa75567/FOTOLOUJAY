@@ -1,6 +1,7 @@
 .auth-page {
   min-height: 100vh;
   background: var(--background-secondary);
+  overflow: hidden; // Prevent scrolling
 }
 
 .auth-container {
@@ -21,6 +22,7 @@
   justify-content: center;
   align-items: center;
   border-right: 1px solid var(--border);
+  overflow-y: auto; // Allow scrolling within left panel if needed
 
   @media (max-width: 1024px) {
     padding: 3rem 2rem;
@@ -137,6 +139,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow-y: auto; // Allow scrolling within right panel if needed
 
   @media (max-width: 1024px) {
     padding: 3rem 2rem;
@@ -174,7 +177,95 @@
   }
 }
 
+// Step indicator styles
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+
+  @media (max-width: 640px) {
+    gap: 0.5rem;
+  }
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.5;
+  transition: var(--transition);
+
+  &.active {
+    opacity: 1;
+  }
+
+  &.completed {
+    opacity: 0.8;
+  }
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 1.125rem;
+  transition: var(--transition);
+
+  .step.active & {
+    background: var(--primary);
+    color: var(--text-primary);
+  }
+
+  .step.completed & {
+    background: var(--success);
+    color: var(--white);
+  }
+}
+
+.step-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  white-space: nowrap;
+
+  @media (max-width: 640px) {
+    font-size: 0.75rem;
+  }
+}
+
+.step-connector {
+  width: 60px;
+  height: 2px;
+  background: var(--border);
+  transition: var(--transition);
+
+  &.active {
+    background: var(--primary);
+  }
+
+  @media (max-width: 640px) {
+    width: 40px;
+  }
+}
+
 .auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.step-content {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -246,6 +337,25 @@
 .btn-full {
   width: 100%;
   margin-top: 0.5rem;
+}
+
+.step-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .btn {
+    flex: 1;
+
+    @media (max-width: 640px) {
+      width: 100%;
+    }
+  }
 }
 
 .auth-footer {
@@ -342,5 +452,19 @@
 
   .auth-card {
     padding: 1.5rem;
+  }
+
+  .step-indicator {
+    margin-top: 1.5rem;
+  }
+
+  .step-number {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .step-connector {
+    width: 30px;
   }
 }

@@ -15,16 +15,44 @@ export class RegisterComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  // Form data
   username = '';
   email = '';
   password = '';
   phone = '';
   address = '';
+
+  // UI state
   error = '';
   isLoading = false;
+  currentStep = 1; // 1 for account info, 2 for personal info
+
+  // Step 1 validation
+  get isStep1Valid(): boolean {
+    return !!(this.username && this.email && this.password);
+  }
+
+  // Step 2 validation
+  get isStep2Valid(): boolean {
+    return !!(this.phone && this.address);
+  }
+
+  nextStep(): void {
+    if (this.currentStep === 1 && this.isStep1Valid) {
+      this.currentStep = 2;
+      this.error = '';
+    }
+  }
+
+  prevStep(): void {
+    if (this.currentStep === 2) {
+      this.currentStep = 1;
+      this.error = '';
+    }
+  }
 
   onSubmit(): void {
-    if (!this.username || !this.email || !this.password || !this.phone || !this.address) {
+    if (!this.isStep1Valid || !this.isStep2Valid) {
       this.error = 'Veuillez remplir tous les champs';
       return;
     }

@@ -48,9 +48,22 @@
         <div class="auth-header">
           <h2>Inscription</h2>
           <p>Créez votre compte gratuitement</p>
+
+          <!-- Step indicator -->
+          <div class="step-indicator">
+            <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+              <span class="step-number">1</span>
+              <span class="step-label">Informations du compte</span>
+            </div>
+            <div class="step-connector" [class.active]="currentStep > 1"></div>
+            <div class="step" [class.active]="currentStep >= 2">
+              <span class="step-number">2</span>
+              <span class="step-label">Informations personnelles</span>
+            </div>
+          </div>
         </div>
 
-        <form (ngSubmit)="onSubmit()" class="auth-form">
+        <form class="auth-form">
           @if (error) {
             <div class="alert alert-error">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -62,126 +75,152 @@
             </div>
           }
 
-          <div class="form-group">
-            <label for="username">Nom d'utilisateur</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                [(ngModel)]="username"
-                class="input"
-                placeholder="johndoe"
-                required
-                [disabled]="isLoading"
-              />
-            </div>
-          </div>
+          <!-- Step 1: Account Information -->
+          @if (currentStep === 1) {
+            <div class="step-content">
+              <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    [(ngModel)]="username"
+                    class="input"
+                    placeholder="johndoe"
+                    required
+                    [disabled]="isLoading"
+                  />
+                </div>
+              </div>
 
-          <div class="form-group">
-            <label for="email">Adresse email</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                [(ngModel)]="email"
-                class="input"
-                placeholder="votre@email.com"
-                required
-                [disabled]="isLoading"
-              />
-            </div>
-          </div>
+              <div class="form-group">
+                <label for="email">Adresse email</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    [(ngModel)]="email"
+                    class="input"
+                    placeholder="votre@email.com"
+                    required
+                    [disabled]="isLoading"
+                  />
+                </div>
+              </div>
 
-          <div class="form-group">
-            <label for="password">Mot de passe</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                [(ngModel)]="password"
-                class="input"
-                placeholder="••••••••"
-                required
-                minlength="6"
-                [disabled]="isLoading"
-              />
-            </div>
-            <small class="input-hint">Minimum 6 caractères</small>
-          </div>
+              <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    [(ngModel)]="password"
+                    class="input"
+                    placeholder="••••••••"
+                    required
+                    minlength="6"
+                    [disabled]="isLoading"
+                  />
+                </div>
+                <small class="input-hint">Minimum 6 caractères</small>
+              </div>
 
-          <div class="form-group">
-            <label for="phone">Numéro de téléphone</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                [(ngModel)]="phone"
-                class="input"
-                placeholder="77 123 45 67"
-                required
-                pattern="^(77|78|76|70|75)[0-9]{7}$"
-                [disabled]="isLoading"
-              />
+              <button type="button" class="btn btn-primary btn-full" (click)="nextStep()" [disabled]="!isStep1Valid || isLoading">
+                Continuer
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 18l6-6-6-6"></path>
+                </svg>
+              </button>
             </div>
-            <small class="input-hint">Numéro sénégalais (9 chiffres, commence par 77, 78, 76, 70 ou 75)</small>
-          </div>
+          }
 
-          <div class="form-group">
-            <label for="address">Adresse</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                [(ngModel)]="address"
-                class="input"
-                placeholder="Votre adresse complète"
-                required
-                minlength="5"
-                maxlength="200"
-                [disabled]="isLoading"
-              />
+          <!-- Step 2: Personal Information -->
+          @if (currentStep === 2) {
+            <div class="step-content">
+              <div class="form-group">
+                <label for="phone">Numéro de téléphone</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                  </svg>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    [(ngModel)]="phone"
+                    class="input"
+                    placeholder="77 123 45 67"
+                    required
+                    pattern="^(77|78|76|70|75)[0-9]{7}$"
+                    [disabled]="isLoading"
+                  />
+                </div>
+                <small class="input-hint">Numéro sénégalais (9 chiffres, commence par 77, 78, 76, 70 ou 75)</small>
+              </div>
+
+              <div class="form-group">
+                <label for="address">Adresse</label>
+                <div class="input-wrapper">
+                  <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    [(ngModel)]="address"
+                    class="input"
+                    placeholder="Votre adresse complète"
+                    required
+                    minlength="5"
+                    maxlength="200"
+                    [disabled]="isLoading"
+                  />
+                </div>
+                <small class="input-hint">Adresse complète pour la livraison</small>
+              </div>
+
+              <div class="step-actions">
+                <button type="button" class="btn btn-secondary" (click)="prevStep()" [disabled]="isLoading">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"></path>
+                  </svg>
+                  Retour
+                </button>
+
+                <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="!isStep2Valid || isLoading">
+                  @if (isLoading) {
+                    <div class="spinner"></div>
+                    <span>Inscription...</span>
+                  } @else {
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <line x1="20" y1="8" x2="20" y2="14"></line>
+                      <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                    <span>Créer mon compte</span>
+                  }
+                </button>
+              </div>
             </div>
-            <small class="input-hint">Adresse complète pour la livraison</small>
-          </div>
-
-          <button type="submit" class="btn btn-primary btn-full" [disabled]="isLoading">
-            @if (isLoading) {
-              <div class="spinner"></div>
-              <span>Inscription...</span>
-            } @else {
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <line x1="20" y1="8" x2="20" y2="14"></line>
-                <line x1="23" y1="11" x2="17" y2="11"></line>
-              </svg>
-              <span>Créer mon compte</span>
-            }
-          </button>
+          }
 
           <div class="auth-footer">
             <p>Déjà un compte ?
