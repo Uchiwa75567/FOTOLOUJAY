@@ -13,6 +13,9 @@ export interface Product {
   userId: number;
   createdAt: string;
   updatedAt: string;
+  condition?: 'good' | 'average' | 'poor';
+  phone?: string;
+  address?: string;
   user?: {
     id: number;
     username: string;

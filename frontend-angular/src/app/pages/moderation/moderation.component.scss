@@ -1,6 +1,6 @@
 .moderation-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FFD700 0%, #FCD116 100%);
 }
 
 .moderation-container {
@@ -11,7 +11,7 @@
 
 .moderation-header {
   text-align: center;
-  color: white;
+  color: #1A1A1A;
   margin-bottom: 3rem;
 
   h1 {
@@ -32,13 +32,13 @@
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  color: white;
+  color: #1A1A1A;
 
   .spinner {
     width: 48px;
     height: 48px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
+    border: 4px solid rgba(26, 26, 26, 0.3);
+    border-top-color: #FFD700;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 1rem;
@@ -80,7 +80,7 @@
     display: inline-block;
     padding: 0.5rem 1.5rem;
     background: rgba(255, 255, 255, 0.2);
-    color: white;
+    color: #1A1A1A;
     border-radius: 50px;
     font-weight: 600;
     backdrop-filter: blur(10px);
@@ -330,7 +330,7 @@
 
     &:focus {
       outline: none;
-      border-color: #00853F;
+      border-color: #FFD700;
     }
 
     &:disabled {

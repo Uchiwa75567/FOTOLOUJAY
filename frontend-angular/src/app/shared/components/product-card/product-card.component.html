@@ -1,4 +1,4 @@
-<a [routerLink]="['/product', product.id]" class="product-card">
+<div class="product-card">
   <div class="product-image-wrapper">
     <img [src]="getImageUrl(product.photoUrl)" [alt]="product.title" class="product-image" />
     <div class="product-overlay">
@@ -10,12 +10,12 @@
         <span>{{ product.views }}</span>
       </div>
     </div>
-  </a>
-  
+  </div>
+
   <div class="product-content">
     <h3 class="product-title">{{ product.title }}</h3>
     <p class="product-description">{{ product.description }}</p>
-    
+
     <div class="product-footer">
       @if (product.user) {
         <div class="product-author">

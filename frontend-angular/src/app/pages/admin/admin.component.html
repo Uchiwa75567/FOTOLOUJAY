@@ -19,6 +19,7 @@
         <div class="spinner"></div>
       </div>
     } @else if (stats) {
+      <!-- Statistics Cards -->
       <div class="stats-grid">
         <div class="stat-card card">
           <div class="stat-header">
@@ -118,6 +119,41 @@
           </div>
           <div class="stat-value">{{ stats.adminUsers }}</div>
           <p class="stat-description">Accès complet</p>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <h2 class="charts-title">Visualisation des Données</h2>
+
+        <div class="charts-grid">
+          <!-- User Roles Chart -->
+          <div class="chart-card card">
+            <div class="chart-header">
+              <h3>Répartition des Utilisateurs par Rôle</h3>
+            </div>
+            <div class="chart-container">
+              <canvas baseChart
+                      [data]="userRoleChartData"
+                      [options]="chartOptions"
+                      chartType="doughnut">
+              </canvas>
+            </div>
+          </div>
+
+          <!-- Product Status Chart -->
+          <div class="chart-card card">
+            <div class="chart-header">
+              <h3>Statut des Produits</h3>
+            </div>
+            <div class="chart-container">
+              <canvas baseChart
+                      [data]="productStatusChartData"
+                      [options]="chartOptions"
+                      chartType="pie">
+              </canvas>
+            </div>
+          </div>
         </div>
       </div>
     } @else {
