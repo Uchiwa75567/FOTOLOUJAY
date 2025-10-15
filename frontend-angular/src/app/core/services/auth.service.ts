@@ -16,6 +16,7 @@ export interface User {
 }
 
 export interface UserProfileUpdate {
+  email?: string;
   phone?: string;
   address?: string;
 }
@@ -111,18 +112,31 @@ export class AuthService {
     return this.currentUser()?.role === 'ADMIN';
   }
 
-  updateProfile(data: UserProfileUpdate): Observable<User> {
-    return this.http.put<User>(`${this.API_URL}/users/profile`, data)
+  updateProfile(data: UserProfileUpdate): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/settings/profile`, data)
       .pipe(
-        tap(updatedUser => {
-          const currentUser = this.currentUser();
-          if (currentUser) {
-            const mergedUser = { ...currentUser, ...updatedUser };
-            localStorage.setItem('user', JSON.stringify(mergedUser));
-            this.currentUser.set(mergedUser);
+        tap(response => {
+          if (response.success && response.user) {
+            const currentUser = this.currentUser();
+            if (currentUser) {
+              const mergedUser = { ...currentUser, ...response.user };
+              localStorage.setItem('user', JSON.stringify(mergedUser));
+              this.currentUser.set(mergedUser);
+            }
           }
         })
       );
+  }
+
+  getProfile(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/settings/profile`);
+  }
+
+  changePassword(currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.put<any>(`${this.API_URL}/settings/password`, {
+      currentPassword,
+      newPassword
+    });
   }
 
   refreshUserData(): Observable<User> {
