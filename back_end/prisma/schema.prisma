@@ -29,6 +29,8 @@ model User {
   premiumExpiry DateTime? // Date d'expiration du premium
   products      Product[]
   paymentTransactions PaymentTransaction[]
+  likes         Like[]
+  notifications Notification[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
@@ -41,9 +43,10 @@ model Product {
   status         Status    @default(PENDING)
   views          Int       @default(0)
   vip            Boolean   @default(false)
-  rejectionReason String?  
+  rejectionReason String?
   user           User      @relation(fields: [userId], references: [id])
   userId         Int
+  likes          Like[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 }
@@ -59,6 +62,29 @@ model PaymentTransaction {
   token       String   @unique
   createdAt   DateTime @default(now())
   completedAt DateTime?
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Notification {
+  id        Int             @id @default(autoincrement())
+  user      User            @relation(fields: [userId], references: [id])
+  userId    Int
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean         @default(false)
+  productId Int?
+  createdAt DateTime        @default(now())
 }
 
 enum Role {
@@ -80,4 +106,11 @@ enum PaymentStatus {
   COMPLETED
   FAILED
   CANCELLED
+}
+
+enum NotificationType {
+  PRODUCT_APPROVED
+  PRODUCT_REJECTED
+  PRODUCT_VIEWED
+  SYSTEM
 }

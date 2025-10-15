@@ -2,6 +2,7 @@
 import { Request, Response } from "express";
 import prisma from "../config/prisma";
 import { notifyProductValidated, notifyProductRejected } from "../services/notification.service";
+import { NotificationController } from "./notification.controller";
 
 /**
  * GET /api/admin/stats
@@ -76,7 +77,16 @@ export const validateProduct = async (req: Request, res: Response) => {
       include: { user: true },
     });
 
-    // Send notification
+    // Send notification to user
+    await NotificationController.createNotification(
+      product.userId,
+      "PRODUCT_APPROVED",
+      "Produit validé",
+      `Votre produit "${product.title}" a été validé et est maintenant visible sur la plateforme.`,
+      product.id
+    );
+
+    // Send email notification
     await notifyProductValidated(product.user.email, product.title);
 
     return res.json({ ...product, message: "Produit validé avec succès" });
@@ -107,7 +117,16 @@ export const rejectProduct = async (req: Request, res: Response) => {
       include: { user: true },
     });
 
-    // Send notification
+    // Send notification to user
+    await NotificationController.createNotification(
+      product.userId,
+      "PRODUCT_REJECTED",
+      "Produit rejeté",
+      `Votre produit "${product.title}" a été rejeté.${reason ? ` Raison: ${reason}` : ""}`,
+      product.id
+    );
+
+    // Send email notification
     await notifyProductRejected(product.user.email, product.title, reason);
 
     return res.json({ ...product, message: "Produit rejeté avec succès" });
