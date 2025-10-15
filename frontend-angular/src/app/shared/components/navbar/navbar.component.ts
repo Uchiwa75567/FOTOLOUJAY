@@ -33,6 +33,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isPremium = signal(false);
   isLoadingPremium = signal(false);
   showNotifications = signal(false);
+  showMenuDropdown = signal(false);
   unreadNotificationsCount = signal(0);
   notifications = signal<Notification[]>([]);
 
@@ -101,6 +102,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   toggleNotifications(): void {
     this.showNotifications.set(!this.showNotifications());
+  }
+
+  toggleMenuDropdown(): void {
+    this.showMenuDropdown.set(!this.showMenuDropdown());
   }
 
   markAsRead(notificationId: string): void {

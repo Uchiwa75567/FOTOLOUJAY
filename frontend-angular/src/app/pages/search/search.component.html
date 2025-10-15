@@ -1,0 +1,58 @@
+<div class="search-page">
+  <div class="container">
+    <div class="search-header">
+      <h1>Résultats de recherche</h1>
+      <div class="search-input-container">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+          placeholder="Rechercher des produits..."
+          class="search-input"
+        />
+        <button (click)="onSearch()" class="search-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+      </div>
+      @if (searchQuery()) {
+        <p class="search-query">Résultats pour "<strong>{{ searchQuery() }}</strong>"</p>
+      }
+    </div>
+
+    <div class="search-results">
+      @if (isLoading()) {
+        <div class="loading">
+          <div class="spinner"></div>
+          <p>Recherche en cours...</p>
+        </div>
+      } @else if (hasSearched() && products().length === 0) {
+        <div class="no-results">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <h3>Aucun résultat trouvé</h3>
+          <p>Essayez avec des mots-clés différents ou vérifiez l'orthographe.</p>
+        </div>
+      } @else if (products().length > 0) {
+        <div class="products-grid">
+          @for (product of products(); track product.id) {
+            <app-product-card [product]="product"></app-product-card>
+          }
+        </div>
+      } @else if (!hasSearched()) {
+        <div class="search-prompt">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <h3>Commencez votre recherche</h3>
+          <p>Saisissez un terme de recherche ci-dessus pour trouver des produits.</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

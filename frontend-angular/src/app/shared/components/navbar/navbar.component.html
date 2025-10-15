@@ -40,6 +40,49 @@
             <span>Paramètres</span>
           </a>
 
+          <div class="menu-dropdown-container">
+            <button class="nav-link menu-dropdown-btn" (click)="toggleMenuDropdown()" [class.active]="showMenuDropdown()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="1"></circle>
+                <circle cx="12" cy="5" r="1"></circle>
+                <circle cx="12" cy="19" r="1"></circle>
+              </svg>
+              <span>Menu</span>
+            </button>
+
+            @if (showMenuDropdown()) {
+              <div class="menu-dropdown">
+                @if (!isPremium() && !isLoadingPremium()) {
+                  <a routerLink="/premium" routerLinkActive="active" class="dropdown-item nav-link-premium">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                    </svg>
+                    <span>Premium</span>
+                  </a>
+                }
+
+                @if (isModerator()) {
+                  <a routerLink="/moderation" routerLinkActive="active" class="dropdown-item nav-link-moderator">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>Modération</span>
+                  </a>
+                }
+
+                @if (authService.isAdmin()) {
+                  <a routerLink="/admin" routerLinkActive="active" class="dropdown-item nav-link-admin">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m0-6l4.2-4.2"></path>
+                    </svg>
+                    <span>Admin</span>
+                  </a>
+                }
+              </div>
+            }
+          </div>
+
           <div class="notification-container">
             <button class="nav-link notification-btn" (click)="toggleNotifications()" [class.active]="showNotifications()">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -85,34 +128,6 @@
               </div>
             }
           </div>
-
-          @if (!isPremium() && !isLoadingPremium()) {
-            <a routerLink="/premium" routerLinkActive="active" class="nav-link nav-link-premium">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
-              </svg>
-              <span>Premium</span>
-            </a>
-          }
-
-          @if (isModerator()) {
-            <a routerLink="/moderation" routerLinkActive="active" class="nav-link nav-link-moderator">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-              </svg>
-              <span>Modération</span>
-            </a>
-          }
-
-          @if (authService.isAdmin()) {
-            <a routerLink="/admin" routerLinkActive="active" class="nav-link nav-link-admin">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m0-6l4.2-4.2"></path>
-              </svg>
-              <span>Admin</span>
-            </a>
-          }
 
           <div class="navbar-divider"></div>
 
