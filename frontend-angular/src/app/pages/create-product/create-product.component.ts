@@ -21,6 +21,7 @@ export class CreateProductComponent implements OnInit {
   private router = inject(Router);
 
   productForm: FormGroup;
+  capturedPhotos = signal<string[]>([]);
   showCamera = signal(false);
   capturedPhoto = signal<string | null>(null);
   isSubmitting = signal(false);
@@ -32,6 +33,7 @@ export class CreateProductComponent implements OnInit {
     this.productForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+      price: [0, [Validators.required, Validators.min(0)]],
       condition: ['good', [Validators.required]]
     });
   }
@@ -46,7 +48,7 @@ export class CreateProductComponent implements OnInit {
   }
 
   onPhotoCaptured(photoBase64: string): void {
-    this.capturedPhoto.set(photoBase64);
+    this.capturedPhotos.update(photos => [...photos, photoBase64]);
     this.showCamera.set(false);
   }
 
@@ -54,8 +56,8 @@ export class CreateProductComponent implements OnInit {
     this.showCamera.set(false);
   }
 
-  removePhoto(): void {
-    this.capturedPhoto.set(null);
+  removePhoto(index: number): void {
+    this.capturedPhotos.update(photos => photos.filter((_, i) => i !== index));
   }
 
   onSubmit(): void {
@@ -64,8 +66,8 @@ export class CreateProductComponent implements OnInit {
       return;
     }
 
-    if (!this.capturedPhoto()) {
-      this.errorMessage.set('Veuillez capturer une photo de votre produit');
+    if (this.capturedPhotos().length === 0) {
+      this.errorMessage.set('Veuillez capturer au moins une photo de votre produit');
       return;
     }
 
@@ -75,15 +77,15 @@ export class CreateProductComponent implements OnInit {
     const formData = {
       title: this.productForm.value.title,
       description: this.productForm.value.description,
-      condition: this.productForm.value.condition,
-      photoBase64: this.capturedPhoto()!
+      price: this.productForm.value.price,
+      photos: this.capturedPhotos()
     };
 
     this.productService.createProduct(formData).subscribe({
       next: (response) => {
         this.successMessage.set('✅ Produit créé avec succès ! En attente de validation par un modérateur.');
         this.isSubmitting.set(false);
-        
+
         // Redirect to dashboard after 2 seconds
         setTimeout(() => {
           this.router.navigate(['/dashboard']);
@@ -112,6 +114,10 @@ export class CreateProductComponent implements OnInit {
 
   get description() {
     return this.productForm.get('description');
+  }
+
+  get price() {
+    return this.productForm.get('price');
   }
 
   get condition() {

@@ -16,6 +16,9 @@ const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const admin_route_1 = __importDefault(require("./routes/admin.route"));
 const premium_routes_1 = __importDefault(require("./routes/premium.routes"));
+const settings_routes_1 = __importDefault(require("./routes/settings.routes"));
+const like_routes_1 = __importDefault(require("./routes/like.routes"));
+const notification_routes_1 = __importDefault(require("./routes/notification.routes"));
 require("./cron/cleanup"); // démarre les crons
 const app = (0, express_1.default)();
 // Configuration CORS pour permettre les requêtes depuis le frontend Angular
@@ -41,6 +44,9 @@ app.use("/api/users", user_routes_1.default);
 app.use("/api/products", photo_routes_1.default);
 app.use("/api/admin", admin_route_1.default);
 app.use("/api/premium", premium_routes_1.default);
+app.use("/api/settings", settings_routes_1.default);
+app.use("/api/likes", like_routes_1.default);
+app.use("/api/notifications", notification_routes_1.default);
 // Static uploads (serve images)
 app.use("/uploads", express_1.default.static(path_1.default.join(process.cwd(), "uploads")));
 const PORT = 3001;

@@ -1,23 +1,36 @@
-// src/routes/photo.routes.ts
-import { Router } from "express";
-import { createProductWithPhoto, listProducts, getProduct, republishProduct, getUserProducts } from "../controllers/photo.controller";
+import express from "express";
+import {
+  createProductWithPhotos,
+  createProductWithPhoto,
+  createProduct,
+  listProducts,
+  getUserProducts,
+  getProduct,
+  republishProduct
+} from "../controllers/photo.controller";
 import { requireAuth } from "../middlewares/auth.middleware";
 
-const router = Router();
+const router = express.Router();
 
-// publie un produit (photo capturée obligatoire)
-router.post("/", requireAuth, createProductWithPhoto);
+// Routes pour les produits avec photos multiples
+router.post("/", requireAuth, createProductWithPhotos);
 
-// liste publique (acheteurs non-connectés)
+// Route legacy pour compatibilité
+router.post("/single", requireAuth, createProductWithPhoto);
+
+// Route pour créer un produit sans photo (pour tests)
+router.post("/no-photo", createProduct);
+
+// Liste des produits validés
 router.get("/", listProducts);
 
-// récupérer les produits de l'utilisateur connecté (tous les statuts)
+// Produits de l'utilisateur connecté
 router.get("/user/my-products", requireAuth, getUserProducts);
 
-// détails produit (public) — auth optionnelle
+// Détail d'un produit
 router.get("/:id", getProduct);
 
-// republier un produit
-router.put("/:id/republish", requireAuth, republishProduct);
+// Republication d'un produit
+router.put("/:id/republish", republishProduct);
 
 export default router;

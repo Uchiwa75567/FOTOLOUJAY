@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.rejectProduct = exports.validateProduct = exports.getPendingProducts = exports.getStats = void 0;
 const prisma_1 = __importDefault(require("../config/prisma"));
 const notification_service_1 = require("../services/notification.service");
+const notification_controller_1 = require("./notification.controller");
 /**
  * GET /api/admin/stats
  * Role: ADMIN
@@ -75,7 +76,9 @@ const validateProduct = async (req, res) => {
             data: updateData,
             include: { user: true },
         });
-        // Send notification
+        // Send notification to user
+        await notification_controller_1.NotificationController.createNotification(product.userId, "PRODUCT_APPROVED", "Produit validé", `Votre produit "${product.title}" a été validé et est maintenant visible sur la plateforme.`, product.id);
+        // Send email notification
         await (0, notification_service_1.notifyProductValidated)(product.user.email, product.title);
         return res.json({ ...product, message: "Produit validé avec succès" });
     }
@@ -103,7 +106,9 @@ const rejectProduct = async (req, res) => {
             data: updateData,
             include: { user: true },
         });
-        // Send notification
+        // Send notification to user
+        await notification_controller_1.NotificationController.createNotification(product.userId, "PRODUCT_REJECTED", "Produit rejeté", `Votre produit "${product.title}" a été rejeté.${reason ? ` Raison: ${reason}` : ""}`, product.id);
+        // Send email notification
         await (0, notification_service_1.notifyProductRejected)(product.user.email, product.title, reason);
         return res.json({ ...product, message: "Produit rejeté avec succès" });
     }

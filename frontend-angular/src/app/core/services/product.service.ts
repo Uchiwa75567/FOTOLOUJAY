@@ -8,19 +8,32 @@ export interface Product {
   title: string;
   description: string;
   photoUrl: string;
+  price: number;
   status: 'PENDING' | 'VALID' | 'DELETED';
   views: number;
   userId: number;
   createdAt: string;
   updatedAt: string;
   condition?: 'good' | 'average' | 'poor';
+  vip?: boolean;
+  photos?: ProductPhoto[];
   user?: {
     id: number;
     username: string;
     role: string;
     phone?: string;
     address?: string;
+    premiumExpiry?: string;
   };
+}
+
+export interface ProductPhoto {
+  id: number;
+  url: string;
+  isMain: boolean;
+  order: number;
+  productId: number;
+  createdAt: string;
 }
 
 @Injectable({
@@ -43,8 +56,12 @@ export class ProductService {
     return this.http.get<Product>(`${this.API_URL}/products/${id}`);
   }
 
-  createProduct(data: { title: string; description: string; photoBase64: string }): Observable<Product> {
+  createProduct(data: { title: string; description: string; price: number; photos: string[] }): Observable<Product> {
     return this.http.post<Product>(`${this.API_URL}/products`, data);
+  }
+
+  searchProducts(query: string): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.API_URL}/products/search?q=${encodeURIComponent(query)}`);
   }
 
   republishProduct(id: number): Observable<Product> {

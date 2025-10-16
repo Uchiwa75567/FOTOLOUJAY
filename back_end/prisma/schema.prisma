@@ -39,16 +39,27 @@ model Product {
   id             Int       @id @default(autoincrement())
   title          String
   description    String
-  photoUrl       String
+  price          Int       // Prix en centimes (ex: 5000 = 50€)
   status         Status    @default(PENDING)
   views          Int       @default(0)
   vip            Boolean   @default(false)
   rejectionReason String?
   user           User      @relation(fields: [userId], references: [id])
   userId         Int
+  photos         ProductPhoto[]
   likes          Like[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+}
+
+model ProductPhoto {
+  id        Int     @id @default(autoincrement())
+  url       String
+  isMain    Boolean @default(false) // Photo principale
+  order     Int     @default(0)     // Ordre d'affichage
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
 }
 
 model PaymentTransaction {

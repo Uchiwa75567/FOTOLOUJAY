@@ -11,3 +11,11 @@ export interface TokenPayload {
     email: string;
     role: string;
 }
+export interface ProductPhoto {
+    id: number;
+    url: string;
+    isMain: boolean;
+    order: number;
+    productId: number;
+    createdAt: string;
+}

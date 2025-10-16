@@ -34,9 +34,14 @@ export class SearchComponent implements OnInit {
 
   private performSearch(query: string): void {
     this.isLoading.set(true);
-    this.productService.searchProducts(query).subscribe({
+    this.productService.getProducts().subscribe({
       next: (products: Product[]) => {
-        this.products.set(products);
+        // Simple search implementation - filter products by title/description
+        const filteredProducts = products.filter(product =>
+          product.title.toLowerCase().includes(query.toLowerCase()) ||
+          product.description.toLowerCase().includes(query.toLowerCase())
+        );
+        this.products.set(filteredProducts);
         this.hasSearched.set(true);
         this.isLoading.set(false);
       },

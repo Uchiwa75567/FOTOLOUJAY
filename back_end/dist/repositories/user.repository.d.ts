@@ -1,29 +1,29 @@
 import { Role } from "@prisma/client";
 export declare const findAll: () => Promise<{
-    phone: string | null;
-    address: string | null;
+    createdAt: Date;
+    updatedAt: Date;
     id: number;
     username: string;
     email: string;
     password: string;
     refreshToken: string | null;
+    phone: string | null;
+    address: string | null;
     role: import(".prisma/client").$Enums.Role;
     premiumExpiry: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
 }[]>;
 export declare const findById: (id: number) => Promise<{
-    phone: string | null;
-    address: string | null;
+    createdAt: Date;
+    updatedAt: Date;
     id: number;
     username: string;
     email: string;
     password: string;
     refreshToken: string | null;
+    phone: string | null;
+    address: string | null;
     role: import(".prisma/client").$Enums.Role;
     premiumExpiry: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
 } | null>;
 export declare const create: (data: {
     username: string;
@@ -33,17 +33,17 @@ export declare const create: (data: {
     phone?: string;
     address?: string;
 }) => Promise<{
-    phone: string | null;
-    address: string | null;
+    createdAt: Date;
+    updatedAt: Date;
     id: number;
     username: string;
     email: string;
     password: string;
     refreshToken: string | null;
+    phone: string | null;
+    address: string | null;
     role: import(".prisma/client").$Enums.Role;
     premiumExpiry: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
 }>;
 export declare const update: (id: number, data: Partial<{
     username: string;
@@ -53,28 +53,28 @@ export declare const update: (id: number, data: Partial<{
     phone?: string;
     address?: string;
 }>) => Promise<{
-    phone: string | null;
-    address: string | null;
+    createdAt: Date;
+    updatedAt: Date;
     id: number;
     username: string;
     email: string;
     password: string;
     refreshToken: string | null;
+    phone: string | null;
+    address: string | null;
     role: import(".prisma/client").$Enums.Role;
     premiumExpiry: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
 }>;
 export declare const remove: (id: number) => Promise<{
-    phone: string | null;
-    address: string | null;
+    createdAt: Date;
+    updatedAt: Date;
     id: number;
     username: string;
     email: string;
     password: string;
     refreshToken: string | null;
+    phone: string | null;
+    address: string | null;
     role: import(".prisma/client").$Enums.Role;
     premiumExpiry: Date | null;
-    createdAt: Date;
-    updatedAt: Date;
 }>;

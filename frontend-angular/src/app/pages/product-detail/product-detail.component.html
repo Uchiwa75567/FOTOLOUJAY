@@ -35,21 +35,50 @@
 
         <div class="product-content">
           <div class="product-image-section">
-            <div class="product-image-container">
-              <img [src]="getImageUrl(product()!.photoUrl)" [alt]="product()!.title" class="product-image" />
-              <div class="image-badge">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                  <circle cx="12" cy="13" r="4"></circle>
-                </svg>
-                <span>Photo authentique</span>
+            @if (product()?.photos && product()?.photos!.length > 0) {
+              <div class="product-image-gallery">
+                <div class="main-image-container">
+                  <img [src]="getImageUrl(product()?.photos![0].url)" [alt]="product()?.title" class="product-image" />
+                  <div class="image-badge">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                      <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                    <span>Photo authentique</span>
+                  </div>
+                </div>
+                @if (product()?.photos!.length > 1) {
+                  <div class="thumbnail-gallery">
+                    @for (photo of product()?.photos!; track photo.id) {
+                      <div class="thumbnail-item">
+                        <img [src]="getImageUrl(photo.url)" [alt]="product()?.title" class="thumbnail-image" />
+                      </div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
+            } @else {
+              <div class="product-image-container">
+                <img [src]="getImageUrl(product()!.photoUrl)" [alt]="product()!.title" class="product-image" />
+                <div class="image-badge">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                  <span>Photo authentique</span>
+                </div>
+              </div>
+            }
           </div>
 
           <div class="product-info-section">
             <div class="product-header">
               <h1 class="product-title">{{ product()!.title }}</h1>
+              @if (product()!.price && product()!.price > 0) {
+                <div class="product-price">
+                  <span class="price-amount">{{ product()!.price | currency:'EUR':'symbol':'1.0-0' }}</span>
+                </div>
+              }
               <div class="product-meta">
                 <div class="meta-item">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

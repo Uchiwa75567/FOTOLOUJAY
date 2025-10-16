@@ -4,7 +4,7 @@
   <div class="container">
     <div class="page-header">
       <h1>📷 Publier un produit</h1>
-      <p>Capturez une photo et partagez votre produit avec la communauté</p>
+      <p>Capturez plusieurs photos et partagez votre produit avec la communauté</p>
     </div>
 
     @if (successMessage()) {
@@ -40,26 +40,31 @@
         <div class="product-form-container">
           <!-- Photo Section -->
           <div class="photo-section card">
-            <h2>Photo du produit</h2>
-            <p class="section-description">Prenez une photo claire de votre produit</p>
+            <h2>Photos du produit</h2>
+            <p class="section-description">Prenez plusieurs photos claires de votre produit</p>
             
-            @if (capturedPhoto()) {
-              <div class="photo-preview">
-                <img [src]="capturedPhoto()" alt="Photo du produit" />
+            @if (capturedPhotos().length > 0) {
+              <div class="photos-preview">
+                <div class="photos-grid">
+                  @for (photo of capturedPhotos(); track $index) {
+                    <div class="photo-item">
+                      <img [src]="photo" [alt]="'Photo ' + ($index + 1)" />
+                      <button (click)="removePhoto($index)" class="remove-photo-btn" type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      </button>
+                    </div>
+                  }
+                </div>
                 <div class="photo-actions">
                   <button (click)="openCamera()" class="btn btn-outline">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <polyline points="1 4 1 10 7 10"></polyline>
                       <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                     </svg>
-                    Reprendre la photo
-                  </button>
-                  <button (click)="removePhoto()" class="btn btn-outline btn-destructive">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="3 6 5 6 21 6"></polyline>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    </svg>
-                    Supprimer
+                    Ajouter une photo
                   </button>
                 </div>
               </div>
@@ -77,7 +82,7 @@
                     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                     <circle cx="12" cy="13" r="4"></circle>
                   </svg>
-                  Capturer une photo
+                  Capturer des photos
                 </button>
               </div>
             }
@@ -106,6 +111,30 @@
                     }
                     @if (title?.errors?.['maxlength']) {
                       Le titre ne peut pas dépasser 100 caractères
+                    }
+                  </span>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="price">Prix (€) *</label>
+                <input 
+                  type="number" 
+                  id="price" 
+                  formControlName="price"
+                  class="input"
+                  placeholder="0"
+                  min="0"
+                  step="0.01"
+                  [class.input-error]="price?.invalid && price?.touched"
+                />
+                @if (price?.invalid && price?.touched) {
+                  <span class="error-text">
+                    @if (price?.errors?.['required']) {
+                      Le prix est obligatoire
+                    }
+                    @if (price?.errors?.['min']) {
+                      Le prix doit être positif
                     }
                   </span>
                 }
@@ -221,7 +250,7 @@
                 <button 
                   type="submit" 
                   class="btn btn-primary"
-                  [disabled]="isSubmitting() || !capturedPhoto()"
+                  [disabled]="isSubmitting() || capturedPhotos().length === 0"
                 >
                   @if (isSubmitting()) {
                     <div class="spinner"></div>

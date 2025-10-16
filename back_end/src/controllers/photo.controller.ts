@@ -4,10 +4,10 @@ import prisma from "../config/prisma";
 import path from "path";
 import fs from "fs";
 
-// === Création produit avec photo capturée (base64) ===
-export const createProductWithPhoto = async (req: AuthRequest, res: Response) => {
+// === Création produit avec photos multiples ===
+export const createProductWithPhotos = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, photoBase64 } = req.body;
+    const { title, description, price, photos } = req.body; // photos: array of base64 strings
     const userId = req.user?.id;
 
     // Vérification de l'utilisateur authentifié
@@ -16,17 +16,105 @@ export const createProductWithPhoto = async (req: AuthRequest, res: Response) =>
     }
 
     // Vérification obligatoire des champs
-    if (!title || !description || !photoBase64) {
-      return res.status(400).json({ message: "Titre, description et photo obligatoires" });
+    if (!title || !description || !price || !photos || photos.length === 0) {
+      return res.status(400).json({ message: "Titre, description, prix et au moins une photo obligatoires" });
     }
 
     if (description.length < 10) {
       return res.status(400).json({ message: "Description trop courte (minimum 10 caractères)" });
     }
 
-    // Vérification obligatoire de la photo capturée
-    if (!photoBase64) {
-      return res.status(400).json({ message: "Photo obligatoire - vous devez photographier le produit" });
+    if (price <= 0) {
+      return res.status(400).json({ message: "Prix doit être positif" });
+    }
+
+    // Créer le dossier uploads s'il n'existe pas
+    const uploadPath = path.join(process.cwd(), "uploads");
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath);
+    }
+
+    // Créer le produit
+    const product = await prisma.product.create({
+      data: {
+        title,
+        description,
+        price: Math.round(price * 100), // Convertir en centimes
+        userId,
+        status: "PENDING",
+      },
+    });
+
+    // Traiter les photos
+    const photoUrls: string[] = [];
+    for (let i = 0; i < photos.length; i++) {
+      const photoBase64 = photos[i];
+
+      // Validation du format base64
+      if (!photoBase64.startsWith('data:image/')) {
+        continue; // Skip invalid photos
+      }
+
+      // Générer nom unique pour la photo
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9) + "-" + i;
+      const extension = photoBase64.split(';')[0].split('/')[1];
+      const filename = `${uniqueSuffix}.${extension}`;
+      const filepath = path.join(uploadPath, filename);
+
+      // Extraire les données base64 et sauvegarder
+      const base64Data = photoBase64.split(',')[1];
+      const buffer = Buffer.from(base64Data, 'base64');
+      fs.writeFileSync(filepath, buffer);
+
+      const photoUrl = `/uploads/${filename}`;
+      photoUrls.push(photoUrl);
+
+      // Créer l'entrée ProductPhoto
+      await prisma.productPhoto.create({
+        data: {
+          url: photoUrl,
+          isMain: i === 0, // Première photo = principale
+          order: i,
+          productId: product.id,
+        },
+      });
+    }
+
+    res.status(201).json({
+      ...product,
+      price: product.price / 100, // Retourner en euros
+      photos: photoUrls,
+      message: "Produit créé en attente de validation par un modérateur."
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur lors de la création du produit" });
+  }
+};
+
+// === Création produit avec photo capturée (base64) - LEGACY ===
+export const createProductWithPhoto = async (req: AuthRequest, res: Response) => {
+  try {
+    const { title, description, price, photoBase64 } = req.body;
+    const userId = req.user?.id;
+
+    // Vérification de l'utilisateur authentifié
+    if (!userId) {
+      return res.status(401).json({ message: "Utilisateur non authentifié" });
+    }
+
+    // Vérification obligatoire des champs
+    if (!title || !description || !price || !photoBase64) {
+      return res.status(400).json({ message: "Titre, description, prix et photo obligatoires" });
+    }
+
+    if (description.length < 10) {
+      return res.status(400).json({ message: "Description trop courte (minimum 10 caractères)" });
+    }
+
+    if (price <= 0) {
+      return res.status(400).json({ message: "Prix doit être positif" });
     }
 
     // Validation du format base64
@@ -42,7 +130,7 @@ export const createProductWithPhoto = async (req: AuthRequest, res: Response) =>
 
     // Générer nom unique pour la photo
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const extension = photoBase64.split(';')[0].split('/')[1]; // jpg, png, etc.
+    const extension = photoBase64.split(';')[0].split('/')[1];
     const filename = `${uniqueSuffix}.${extension}`;
     const filepath = path.join(uploadPath, filename);
 
@@ -53,19 +141,31 @@ export const createProductWithPhoto = async (req: AuthRequest, res: Response) =>
 
     const photoUrl = `/uploads/${filename}`;
 
-    // Créer le produit en PENDING pour modération manuelle
+    // Créer le produit
     const product = await prisma.product.create({
       data: {
         title,
         description,
-        photoUrl,
+        price: Math.round(price * 100), // Convertir en centimes
         userId,
         status: "PENDING",
       },
     });
 
+    // Créer l'entrée ProductPhoto
+    await prisma.productPhoto.create({
+      data: {
+        url: photoUrl,
+        isMain: true,
+        order: 0,
+        productId: product.id,
+      },
+    });
+
     res.status(201).json({
       ...product,
+      price: product.price / 100, // Retourner en euros
+      photos: [photoUrl],
       message: "Produit créé en attente de validation par un modérateur."
     });
 
@@ -84,8 +184,8 @@ export const createProduct = async (req: Request, res: Response) => {
       data: {
         title,
         description,
+        price: 0, // Default price
         userId: Number(userId),
-        photoUrl: "", // <-- Ajouté pour respecter Prisma
       },
     });
 
@@ -101,7 +201,7 @@ export const listProducts = async (req: Request, res: Response) => {
   try {
     const products = await prisma.product.findMany({
       where: { status: "VALID" },
-      include: { 
+      include: {
         user: {
           select: {
             id: true,
@@ -111,14 +211,26 @@ export const listProducts = async (req: Request, res: Response) => {
             address: true,
             premiumExpiry: true
           }
+        },
+        photos: {
+          orderBy: { order: 'asc' }
         }
       },
       orderBy: [
-        { vip: "desc" }, // VIP first
+        { vip: "desc" },
         { createdAt: "desc" },
       ],
     });
-    res.json(products);
+
+    // Transformer les données pour compatibilité
+    const transformedProducts = products.map(product => ({
+      ...product,
+      price: product.price / 100, // Convertir en euros
+      photoUrl: product.photos.find(p => p.isMain)?.url || product.photos[0]?.url || '',
+      photos: product.photos
+    }));
+
+    res.json(transformedProducts);
   } catch (error) {
     res.status(500).json({ message: "Erreur lors du chargement des produits" });
   }
@@ -135,7 +247,7 @@ export const getUserProducts = async (req: AuthRequest, res: Response) => {
 
     const products = await prisma.product.findMany({
       where: { userId },
-      include: { 
+      include: {
         user: {
           select: {
             id: true,
@@ -145,12 +257,23 @@ export const getUserProducts = async (req: AuthRequest, res: Response) => {
             address: true,
             premiumExpiry: true
           }
+        },
+        photos: {
+          orderBy: { order: 'asc' }
         }
       },
       orderBy: { createdAt: "desc" },
     });
 
-    res.json(products);
+    // Transformer les données pour compatibilité
+    const transformedProducts = products.map(product => ({
+      ...product,
+      price: product.price / 100, // Convertir en euros
+      photoUrl: product.photos.find(p => p.isMain)?.url || product.photos[0]?.url || '',
+      photos: product.photos
+    }));
+
+    res.json(transformedProducts);
   } catch (error) {
     console.error("getUserProducts error:", error);
     res.status(500).json({ message: "Erreur lors du chargement de vos produits" });
@@ -163,7 +286,7 @@ export const getProduct = async (req: Request, res: Response) => {
     const { id } = req.params;
     const product = await prisma.product.findUnique({
       where: { id: Number(id) },
-      include: { 
+      include: {
         user: {
           select: {
             id: true,
@@ -173,6 +296,9 @@ export const getProduct = async (req: Request, res: Response) => {
             address: true,
             premiumExpiry: true
           }
+        },
+        photos: {
+          orderBy: { order: 'asc' }
         }
       },
     });
@@ -187,7 +313,15 @@ export const getProduct = async (req: Request, res: Response) => {
       data: { views: { increment: 1 } },
     });
 
-    res.json(product);
+    // Transformer les données pour compatibilité
+    const transformedProduct = {
+      ...product,
+      price: product.price / 100, // Convertir en euros
+      photoUrl: product.photos.find(p => p.isMain)?.url || product.photos[0]?.url || '',
+      photos: product.photos
+    };
+
+    res.json(transformedProduct);
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur" });
   }
