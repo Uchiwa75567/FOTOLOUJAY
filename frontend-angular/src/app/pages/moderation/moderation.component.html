@@ -28,42 +28,22 @@
 
       <div class="products-grid">
         @for (product of pendingProducts(); track product.id) {
-          <div class="product-card card" (click)="viewProductDetails(product)">
-            <div class="product-image">
-              <img [src]="getImageUrl(product.photoUrl)" [alt]="product.title" />
-            </div>
-
-            <div class="product-content">
-              <div class="product-header">
-                <h3>{{ product.title }}</h3>
-                <span class="product-date">{{ product.createdAt | date:'short' }}</span>
-              </div>
-
-              <p class="product-description">{{ product.description }}</p>
-
-              <div class="product-user">
+          <div class="product-moderation-wrapper" (click)="viewProductDetails(product)">
+            <app-product-card [product]="product"></app-product-card>
+            <div class="moderation-actions">
+              <button class="btn btn-success" (click)="openValidateModal(product); $event.stopPropagation()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
+                  <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
-                <span>{{ product.user?.username || 'Utilisateur inconnu' }}</span>
-              </div>
-
-              <div class="product-actions" (click)="$event.stopPropagation()">
-                <button class="btn btn-success" (click)="openValidateModal(product)">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                  Valider
-                </button>
-                <button class="btn btn-danger" (click)="openRejectModal(product)">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                  Rejeter
-                </button>
-              </div>
+                Valider
+              </button>
+              <button class="btn btn-danger" (click)="openRejectModal(product); $event.stopPropagation()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Rejeter
+              </button>
             </div>
           </div>
         }
@@ -82,7 +62,7 @@
 
         <div class="modal-body">
           <div class="product-preview">
-            <img [src]="getImageUrl(selectedProduct()!.photoUrl)" [alt]="selectedProduct()!.title" />
+            <img [src]="getImageUrl(selectedProduct()!.photoUrl || selectedProduct()!.photos?.[0]?.url)" [alt]="selectedProduct()!.title" />
           </div>
 
           <div class="form-group">
@@ -127,7 +107,7 @@
 
         <div class="modal-body">
           <div class="product-preview">
-            <img [src]="getImageUrl(selectedProduct()!.photoUrl)" [alt]="selectedProduct()!.title" />
+            <img [src]="getImageUrl(selectedProduct()!.photoUrl || selectedProduct()!.photos?.[0]?.url)" [alt]="selectedProduct()!.title" />
           </div>
 
           <div class="form-group">

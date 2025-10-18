@@ -45,11 +45,23 @@ export const getPendingProducts = async (req: Request, res: Response) => {
   try {
     const pendingProducts = await prisma.product.findMany({
       where: { status: "PENDING" },
-      include: { user: true },
+      include: {
+        user: true,
+        photos: {
+          orderBy: { order: 'asc' }
+        }
+      },
       orderBy: { createdAt: "desc" },
     });
 
-    res.json(pendingProducts);
+    const transformed = pendingProducts.map(product => ({
+      ...product,
+      price: (product as any).price ? (product as any).price / 100 : 0,
+      photoUrl: product.photos?.find(p => p.isMain)?.url || product.photos?.[0]?.url || '',
+      photos: product.photos || []
+    }));
+
+    res.json(transformed);
   } catch (err) {
     console.error("getPendingProducts error:", err);
     res.status(500).json({ message: "Erreur lors de la récupération des produits en attente" });
@@ -74,7 +86,12 @@ export const validateProduct = async (req: Request, res: Response) => {
     const product = await prisma.product.update({
       where: { id },
       data: updateData,
-      include: { user: true },
+      include: {
+        user: true,
+        photos: {
+          orderBy: { order: 'asc' }
+        }
+      },
     });
 
     // Send notification to user
@@ -89,7 +106,14 @@ export const validateProduct = async (req: Request, res: Response) => {
     // Send email notification
     await notifyProductValidated(product.user.email, product.title);
 
-    return res.json({ ...product, message: "Produit validé avec succès" });
+    const transformed = {
+      ...product,
+      price: (product as any).price ? (product as any).price / 100 : 0,
+      photoUrl: product.photos?.find(p => p.isMain)?.url || product.photos?.[0]?.url || '',
+      photos: product.photos || []
+    };
+
+    return res.json({ ...transformed, message: "Produit validé avec succès" });
   } catch (err) {
     console.error("validateProduct error:", err);
     return res.status(404).json({ message: "Produit introuvable" });
@@ -114,7 +138,12 @@ export const rejectProduct = async (req: Request, res: Response) => {
     const product = await prisma.product.update({
       where: { id },
       data: updateData,
-      include: { user: true },
+      include: {
+        user: true,
+        photos: {
+          orderBy: { order: 'asc' }
+        }
+      },
     });
 
     // Send notification to user
@@ -129,7 +158,14 @@ export const rejectProduct = async (req: Request, res: Response) => {
     // Send email notification
     await notifyProductRejected(product.user.email, product.title, reason);
 
-    return res.json({ ...product, message: "Produit rejeté avec succès" });
+    const transformed = {
+      ...product,
+      price: (product as any).price ? (product as any).price / 100 : 0,
+      photoUrl: product.photos?.find(p => p.isMain)?.url || product.photos?.[0]?.url || '',
+      photos: product.photos || []
+    };
+
+    return res.json({ ...transformed, message: "Produit rejeté avec succès" });
   } catch (err) {
     console.error("rejectProduct error:", err);
     return res.status(404).json({ message: "Produit introuvable" });

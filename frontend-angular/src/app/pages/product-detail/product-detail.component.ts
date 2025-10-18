@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Location } from '@angular/common';
 import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 import { ProductService, type Product } from '../../core/services/product.service';
 
@@ -15,6 +16,7 @@ export class ProductDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productService = inject(ProductService);
+  private location = inject(Location);
 
   product = signal<Product | null>(null);
   isLoading = signal(true);
@@ -78,6 +80,28 @@ export class ProductDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/']);
+    try {
+      // 1) Prefer navigation state (works when navigate(..., { state }))
+      const navState: any = history.state;
+      if (navState && navState.fromModeration) {
+        // Clear session flag for compatibility
+        sessionStorage.removeItem('fromModeration');
+        this.router.navigate(['/moderation']);
+        return;
+      }
+
+      // 2) Fallback to sessionStorage (older flows)
+      const fromModeration = sessionStorage.getItem('fromModeration');
+      if (fromModeration === 'true') {
+        sessionStorage.removeItem('fromModeration');
+        this.router.navigate(['/moderation']);
+        return;
+      }
+
+      // 3) Default behaviour: try to go back in history, else navigate to home
+      this.location.back();
+    } catch (e) {
+      this.router.navigate(['/']);
+    }
   }
 }
