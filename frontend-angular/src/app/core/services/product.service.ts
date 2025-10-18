@@ -10,6 +10,7 @@ export interface Product {
   photoUrl: string;
   price: number;
   status: 'PENDING' | 'VALID' | 'DELETED';
+  rejectionReason?: string | null;
   views: number;
   userId: number;
   createdAt: string;

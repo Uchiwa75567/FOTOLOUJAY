@@ -90,6 +90,14 @@
               <p>{{ product()!.description }}</p>
             </div>
 
+            <!-- Show rejection reason to the owner when product was rejected -->
+            @if (product()!.status === 'DELETED' && authService.currentUser() && authService.currentUser()!.id === product()!.userId) {
+              <div class="product-rejection card">
+                <h2>Raison du rejet</h2>
+                <p>{{ product()!.rejectionReason || 'Aucune raison fournie' }}</p>
+              </div>
+            }
+
             @if (product()!.condition) {
               <div class="product-condition card">
                 <h2>État du produit</h2>
