@@ -58,7 +58,8 @@ export const getPendingProducts = async (req: Request, res: Response) => {
       ...product,
       price: (product as any).price ? (product as any).price / 100 : 0,
       photoUrl: product.photos?.find(p => p.isMain)?.url || product.photos?.[0]?.url || '',
-      photos: product.photos || []
+      photos: product.photos || [],
+      condition: product.condition ?? null,
     }));
 
     res.json(transformed);
@@ -110,7 +111,8 @@ export const validateProduct = async (req: Request, res: Response) => {
       ...product,
       price: (product as any).price ? (product as any).price / 100 : 0,
       photoUrl: product.photos?.find(p => p.isMain)?.url || product.photos?.[0]?.url || '',
-      photos: product.photos || []
+      photos: product.photos || [],
+      condition: product.condition ?? null,
     };
 
     return res.json({ ...transformed, message: "Produit validé avec succès" });
@@ -162,7 +164,8 @@ export const rejectProduct = async (req: Request, res: Response) => {
       ...product,
       price: (product as any).price ? (product as any).price / 100 : 0,
       photoUrl: product.photos?.find(p => p.isMain)?.url || product.photos?.[0]?.url || '',
-      photos: product.photos || []
+      photos: product.photos || [],
+      condition: product.condition ?? null,
     };
 
     return res.json({ ...transformed, message: "Produit rejeté avec succès" });

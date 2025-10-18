@@ -57,7 +57,7 @@ export class ProductService {
     return this.http.get<Product>(`${this.API_URL}/products/${id}`);
   }
 
-  createProduct(data: { title: string; description: string; price: number; photos: string[] }): Observable<Product> {
+  createProduct(data: { title: string; description: string; price: number; photos: string[]; condition?: 'good' | 'average' | 'poor' }): Observable<Product> {
     return this.http.post<Product>(`${this.API_URL}/products`, data);
   }
 

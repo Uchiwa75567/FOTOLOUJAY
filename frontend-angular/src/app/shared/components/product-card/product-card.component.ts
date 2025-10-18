@@ -27,6 +27,32 @@ export class ProductCardComponent {
     return `http://localhost:3001${url}`;
   }
 
+  getConditionLabel(condition?: 'good' | 'average' | 'poor'): string {
+    switch (condition) {
+      case 'good':
+        return 'Bonne';
+      case 'average':
+        return 'Moyenne';
+      case 'poor':
+        return 'Mauvaise';
+      default:
+        return '';
+    }
+  }
+
+  getConditionClass(condition?: 'good' | 'average' | 'poor'): string {
+    switch (condition) {
+      case 'good':
+        return 'condition-good';
+      case 'average':
+        return 'condition-average';
+      case 'poor':
+        return 'condition-poor';
+      default:
+        return '';
+    }
+  }
+
   onCardClick(): void {
     try {
       if (this.router.url && this.router.url.includes('/moderation')) {

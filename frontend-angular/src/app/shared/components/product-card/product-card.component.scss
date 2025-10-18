@@ -32,6 +32,34 @@
   background: var(--background-tertiary);
 }
 
+.condition-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-sm);
+}
+
+.condition-good {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.condition-average {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.condition-poor {
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
+}
+
 .product-image {
   position: absolute;
   top: 0;

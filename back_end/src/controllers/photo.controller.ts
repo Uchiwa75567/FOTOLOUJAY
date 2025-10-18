@@ -7,7 +7,7 @@ import fs from "fs";
 // === Création produit avec photos multiples ===
 export const createProductWithPhotos = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, price, photos } = req.body; // photos: array of base64 strings
+  const { title, description, price, photos, condition } = req.body; // photos: array of base64 strings
     const userId = req.user?.id;
 
     // Vérification de l'utilisateur authentifié
@@ -42,6 +42,7 @@ export const createProductWithPhotos = async (req: AuthRequest, res: Response) =
         price: Math.round(price * 100), // Convertir en centimes
         userId,
         status: "PENDING",
+        condition: condition ?? null,
       },
     });
 
@@ -50,40 +51,55 @@ export const createProductWithPhotos = async (req: AuthRequest, res: Response) =
     for (let i = 0; i < photos.length; i++) {
       const photoBase64 = photos[i];
 
-      // Validation du format base64
-      if (!photoBase64.startsWith('data:image/')) {
-        continue; // Skip invalid photos
+      try {
+        // Validation du format base64
+        if (!photoBase64.startsWith('data:image/')) {
+          continue; // Skip invalid photos
+        }
+
+        const parts = photoBase64.split(',');
+        if (parts.length !== 2) {
+          continue; // Invalid format
+        }
+
+        const base64Data = parts[1];
+        if (!base64Data) {
+          continue; // No data
+        }
+
+        // Générer nom unique pour la photo
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9) + "-" + i;
+        const extension = photoBase64.split(';')[0].split('/')[1];
+        const filename = `${uniqueSuffix}.${extension}`;
+        const filepath = path.join(uploadPath, filename);
+
+        // Extraire les données base64 et sauvegarder
+        const buffer = Buffer.from(base64Data, 'base64');
+        fs.writeFileSync(filepath, buffer);
+
+        const photoUrl = `/uploads/${filename}`;
+        photoUrls.push(photoUrl);
+
+        // Créer l'entrée ProductPhoto
+        await prisma.productPhoto.create({
+          data: {
+            url: photoUrl,
+            isMain: i === 0, // Première photo = principale
+            order: i,
+            productId: product.id,
+          },
+        });
+      } catch (photoError) {
+        console.error(`Error processing photo ${i}:`, photoError);
+        // Continue with next photo
       }
-
-      // Générer nom unique pour la photo
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9) + "-" + i;
-      const extension = photoBase64.split(';')[0].split('/')[1];
-      const filename = `${uniqueSuffix}.${extension}`;
-      const filepath = path.join(uploadPath, filename);
-
-      // Extraire les données base64 et sauvegarder
-      const base64Data = photoBase64.split(',')[1];
-      const buffer = Buffer.from(base64Data, 'base64');
-      fs.writeFileSync(filepath, buffer);
-
-      const photoUrl = `/uploads/${filename}`;
-      photoUrls.push(photoUrl);
-
-      // Créer l'entrée ProductPhoto
-      await prisma.productPhoto.create({
-        data: {
-          url: photoUrl,
-          isMain: i === 0, // Première photo = principale
-          order: i,
-          productId: product.id,
-        },
-      });
     }
 
     res.status(201).json({
       ...product,
       price: product.price / 100, // Retourner en euros
       photos: photoUrls,
+      condition: product.condition,
       message: "Produit créé en attente de validation par un modérateur."
     });
 
@@ -96,7 +112,7 @@ export const createProductWithPhotos = async (req: AuthRequest, res: Response) =
 // === Création produit avec photo capturée (base64) - LEGACY ===
 export const createProductWithPhoto = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, price, photoBase64 } = req.body;
+  const { title, description, price, photoBase64, condition } = req.body;
     const userId = req.user?.id;
 
     // Vérification de l'utilisateur authentifié
@@ -149,6 +165,7 @@ export const createProductWithPhoto = async (req: AuthRequest, res: Response) =>
         price: Math.round(price * 100), // Convertir en centimes
         userId,
         status: "PENDING",
+        condition: condition ?? null,
       },
     });
 
@@ -166,6 +183,7 @@ export const createProductWithPhoto = async (req: AuthRequest, res: Response) =>
       ...product,
       price: product.price / 100, // Retourner en euros
       photos: [photoUrl],
+      condition: product.condition,
       message: "Produit créé en attente de validation par un modérateur."
     });
 
@@ -178,7 +196,7 @@ export const createProductWithPhoto = async (req: AuthRequest, res: Response) =>
 // === Création de produit sans upload (photoUrl vide) ===
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const { title, description, userId } = req.body;
+  const { title, description, userId, condition } = req.body;
 
     const product = await prisma.product.create({
       data: {
@@ -186,6 +204,7 @@ export const createProduct = async (req: Request, res: Response) => {
         description,
         price: 0, // Default price
         userId: Number(userId),
+        condition: condition ?? null,
       },
     });
 
@@ -227,7 +246,8 @@ export const listProducts = async (req: Request, res: Response) => {
       ...product,
       price: product.price / 100, // Convertir en euros
       photoUrl: product.photos.find(p => p.isMain)?.url || product.photos[0]?.url || '',
-      photos: product.photos
+      photos: product.photos,
+      condition: product.condition ?? null,
     }));
 
     res.json(transformedProducts);
@@ -270,7 +290,8 @@ export const getUserProducts = async (req: AuthRequest, res: Response) => {
       ...product,
       price: product.price / 100, // Convertir en euros
       photoUrl: product.photos.find(p => p.isMain)?.url || product.photos[0]?.url || '',
-      photos: product.photos
+      photos: product.photos,
+      condition: product.condition ?? null,
     }));
 
     res.json(transformedProducts);
@@ -318,7 +339,8 @@ export const getProduct = async (req: Request, res: Response) => {
       ...product,
       price: product.price / 100, // Convertir en euros
       photoUrl: product.photos.find(p => p.isMain)?.url || product.photos[0]?.url || '',
-      photos: product.photos
+      photos: product.photos,
+      condition: product.condition ?? null,
     };
 
     res.json(transformedProduct);

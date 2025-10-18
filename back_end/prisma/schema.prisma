@@ -42,6 +42,7 @@ model Product {
   price          Int       // Prix en centimes (ex: 5000 = 50€)
   status         Status    @default(PENDING)
   views          Int       @default(0)
+  condition      String?   // Qualité / état du produit: 'good' | 'average' | 'poor'
   vip            Boolean   @default(false)
   rejectionReason String?
   user           User      @relation(fields: [userId], references: [id])

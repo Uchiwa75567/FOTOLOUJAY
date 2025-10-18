@@ -78,7 +78,8 @@ export class CreateProductComponent implements OnInit {
       title: this.productForm.value.title,
       description: this.productForm.value.description,
       price: this.productForm.value.price,
-      photos: this.capturedPhotos()
+      photos: this.capturedPhotos(),
+      condition: this.productForm.value.condition
     };
 
     this.productService.createProduct(formData).subscribe({
